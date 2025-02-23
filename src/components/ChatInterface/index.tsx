@@ -1,5 +1,3 @@
-// src/components/ChatInterface/index.tsx
-
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChatMessageComponent } from './ChatMessage';
@@ -11,12 +9,13 @@ import { useChatStore } from '@/store/chatStore';
 import { characters } from '@/data/characters';
 import type { CharacterId, ChatMessage, ChatOption } from '@/types/chat';
 import chatService from '@/services/chatService';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 export default function ChatInterface({ characterId }: { characterId: CharacterId }) {
   const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { selectedCharacter, messages, currentScene, happiness, actions } = useChatStore();
-
   const [showOptions, setShowOptions] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,6 +23,7 @@ export default function ChatInterface({ characterId }: { characterId: CharacterI
   const [currentVideo, setCurrentVideo] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
+  const [userInput, setUserInput] = useState('');
 
   const character = characters[characterId];
   const currentSceneData = character?.scenes[currentScene];
@@ -126,6 +126,48 @@ export default function ChatInterface({ characterId }: { characterId: CharacterI
     }
   };
 
+  const handleSendMessage = async () => {
+    if (userInput.trim() === '') return;
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await chatService.processMessage(userInput, characterId, currentScene);
+      actions.addMessage({
+        role: 'user',
+        content: { english: userInput }
+      });
+
+      if (response.type === 'success') {
+        actions.addMessage({
+          role: 'assistant',
+          content: response.content.message
+        });
+
+        if (response.content.video) {
+          setCurrentVideo(response.content.video);
+        }
+
+        if (typeof response.content.points === 'number') {
+          actions.updateHappiness(characterId, response.content.points);
+        }
+
+        if (response.content.nextScene !== currentScene) {
+          setIsTransitioning(true);
+          setTimeout(() => {
+            actions.setScene(response.content.nextScene);
+            setIsTransitioning(false);
+          }, 1000);
+        }
+      }
+    } catch (error) {
+      setError('Failed to process response. Please try again.');
+    } finally {
+      setIsLoading(false);
+      setUserInput('');
+    }
+  };
+
   if (!character) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
@@ -136,12 +178,12 @@ export default function ChatInterface({ characterId }: { characterId: CharacterI
 
   return (
     <div className="flex flex-col h-screen bg-gray-900">
-  <ChatHeader
-  characterName={character.name}
-  characterId={characterId} // Pass characterId here
-  happiness={happiness[characterId] || 50}
-  onBack={handleBack}
-/>
+      <ChatHeader
+        characterName={character.name}
+        characterId={characterId}
+        happiness={happiness[characterId] || 50}
+        onBack={handleBack}
+      />
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {currentVideo && (
           <div className="sticky top-0 z-10 pb-4">
@@ -174,6 +216,22 @@ export default function ChatInterface({ characterId }: { characterId: CharacterI
             audioPlaying={audioPlaying}
           />
         )}
+        <div className="flex items-center space-x-2">
+          <Input
+            type="text"
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
+            placeholder="Type a message..."
+            className="flex-1"
+          />
+          <Button
+            onClick={handleSendMessage}
+            disabled={isLoading}
+            className="bg-blue-500 text-white hover:bg-blue-600"
+          >
+            Send
+          </Button>
+        </div>
       </div>
       {showCompletionPopup && character && (
         <ChatCompletionPopup

@@ -4,13 +4,12 @@ interface VideoPlayerProps {
   src: string;
   className?: string;
   ariaLabel?: string;
-
 }
 
-export const VideoPlayer = ({ 
-  src, 
+export const VideoPlayer = ({
+  src,
   className = "w-full h-full object-cover",
-  ariaLabel = "Chat video" 
+  ariaLabel = "Chat video"
 }: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -56,9 +55,9 @@ export const VideoPlayer = ({
 
         video {
           width: 100%;
-          height: 100%;
-          object-fit: contain;
-          max-height: 30vh;
+          height: auto;
+          object-fit: cover;
+          max-height: 20vh; /* Adjust the height as needed */
         }
 
         @media (min-width: 640px) {
@@ -68,7 +67,7 @@ export const VideoPlayer = ({
           }
 
           video {
-            max-height: 40vh;
+            max-height: 30vh;
           }
         }
       `}</style>

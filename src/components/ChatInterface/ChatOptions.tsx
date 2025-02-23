@@ -1,5 +1,4 @@
-// src/components/ChatInterface/ChatOptions.tsx
-
+import { useState } from 'react';
 import { Button } from '../ui/button';
 import { ChatOptionsProps, ChatOption } from '@/types/chat';
 
@@ -9,6 +8,12 @@ export function ChatOptions({
   onPlayAudio,
   audioPlaying
 }: ChatOptionsProps) {
+  const [isExpanded, setIsExpanded] = useState(true);
+
+  const toggleOptions = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   const getPrimaryText = (option: ChatOption) => {
     return option.chinese || option.japanese || option.korean || option.spanish || '';
   };
@@ -19,7 +24,14 @@ export function ChatOptions({
 
   return (
     <div className="space-y-2" role="listbox" aria-label="Response options">
-      {options.map((option, index) => {
+      <Button
+        onClick={toggleOptions}
+        className="flex items-center justify-between w-full p-2 bg-gray-700 hover:bg-gray-600 text-white transition-colors"
+      >
+        <span>Options</span>
+        <span className="ml-2">{isExpanded ? '▲' : '▼'}</span>
+      </Button>
+      {isExpanded && options.map((option, index) => {
         const primaryText = getPrimaryText(option);
         const pronunciationText = getPronunciationText(option);
         const optionId = `option-${index}`;
@@ -67,3 +79,4 @@ export function ChatOptions({
     </div>
   );
 }
+// src/components/ChatInterface/ChatOptions.tsx
