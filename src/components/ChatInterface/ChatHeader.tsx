@@ -1,39 +1,17 @@
-import { useWeb3 } from '@/components/providers/web3-provider';
-
 export function ChatHeader({
   characterName,
   happiness,
-  characterId,
   onBack
 }: {
   characterName: string,
   happiness: number,
-  characterId: string,
   onBack: () => void
 }) {
-  const { address } = useWeb3();
-
-  const handleSafeBack = () => {
-    // Only update the local state and storage - NO blockchain calls
-    if (characterId && address) {
-      const accessKey = `character_access_${address.toLowerCase()}_${characterId}`;
-      localStorage.removeItem(accessKey);
-
-      // Manually dispatch events to update UI without calling blockchain
-      window.dispatchEvent(new CustomEvent('chatCancelled', {
-        detail: { characterId }
-      }));
-    }
-
-    // Just navigate back
-    onBack();
-  };
-
   return (
     <div className="chat-header-container">
       <div className="header-main">
         <button
-          onClick={handleSafeBack}
+          onClick={onBack}
           className="back-button"
           aria-label="Go back"
         >

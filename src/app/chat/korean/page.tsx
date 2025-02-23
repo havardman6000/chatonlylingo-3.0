@@ -1,29 +1,13 @@
 'use client'
-import { BackButton } from '@/components/BackButton'
-// src/app/chat/korean/page.tsx
 
-import { TutorSelect } from '@/components/TutorSelect'
-import { useWeb3 } from '@/components/providers/web3-provider'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { BackButton } from '@/components/BackButton';
+import { TutorSelect } from '@/components/TutorSelect';
 
 export default function KoreanTutorPage() {
-  const { isConnected } = useWeb3()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!isConnected) {
-      router.push('/')
-    }
-  }, [isConnected, router])
-
-  if (!isConnected) {
-    return null
-  }
-  const disabledTutors = ['Min', 'Sua']; // List of disabled tutors
+  const disabledTutors = ['Min', 'Sua'];
 
   return (
-    <main className="min-h-screen bg-gradient-to-r from-purple-50 to-indigo-100 py-12">
+    <main className="min-h-screen bg-gradient-to-r from-red-50 to-pink-100 py-12">
       <div className="fixed top-4 left-4 z-50">
         <BackButton />
       </div>
@@ -39,5 +23,5 @@ export default function KoreanTutorPage() {
         <TutorSelect language="korean" disabledTutors={disabledTutors} />
       </div>
     </main>
-  )
+  );
 }

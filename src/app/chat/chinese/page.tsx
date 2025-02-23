@@ -1,27 +1,10 @@
-// src/app/chat/Chinese/page.tsx
 'use client'
 
 import { BackButton } from '@/components/BackButton';
 import { TutorSelect } from '@/components/TutorSelect';
-import { useWeb3 } from '@/components/providers/web3-provider';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 export default function ChineseTutorPage() {
-  const { isConnected } = useWeb3();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isConnected) {
-      router.push('/');
-    }
-  }, [isConnected, router]);
-
-  if (!isConnected) {
-    return null;
-  }
-
-  const disabledTutors = ['Ting', 'Xue']; // List of disabled tutors
+  const disabledTutors = ['Ting', 'Xue'];
 
   return (
     <main className="min-h-screen bg-gradient-to-r from-red-50 to-pink-100 py-12">

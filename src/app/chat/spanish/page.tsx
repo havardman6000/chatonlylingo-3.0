@@ -1,30 +1,14 @@
-// src/app/chat/spanish/page.tsx
 'use client'
 
-import { BackButton } from '@/components/BackButton'
-import { TutorSelect } from '@/components/TutorSelect'
-import { useWeb3 } from '@/components/providers/web3-provider'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { BackButton } from '@/components/BackButton';
+import { TutorSelect } from '@/components/TutorSelect';
 
 export default function SpanishTutorPage() {
-  const { isConnected } = useWeb3()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!isConnected) {
-      router.push('/language-selector')
-    }
-  }, [isConnected, router])
-
-  if (!isConnected) {
-    return null
-  }
-  const disabledTutors = ['Sofia', 'Valentina']; // List of disabled tutors
+  const disabledTutors = ['Sofia', 'Valentina'];
 
   return (
-    <main className="min-h-screen bg-gradient-to-r from-yellow-50 to-orange-100 py-12">
-       <div className="fixed top-4 left-4 z-50">
+    <main className="min-h-screen bg-gradient-to-r from-red-50 to-pink-100 py-12">
+      <div className="fixed top-4 left-4 z-50">
         <BackButton />
       </div>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -36,8 +20,8 @@ export default function SpanishTutorPage() {
             Select a tutor to begin your Spanish learning journey
           </p>
         </div>
-        <TutorSelect language="spanish"disabledTutors={disabledTutors}  />
+        <TutorSelect language="spanish" disabledTutors={disabledTutors} />
       </div>
     </main>
-  )
+  );
 }
