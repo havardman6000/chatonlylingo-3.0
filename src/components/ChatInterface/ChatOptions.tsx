@@ -1,3 +1,5 @@
+// src/components/ChatInterface/ChatOptions.tsx
+
 import { Button } from '../ui/button';
 import { ChatOptionsProps, ChatOption } from '@/types/chat';
 
@@ -27,13 +29,13 @@ export function ChatOptions({
             key={index}
             id={optionId}
             className="w-full text-left p-2 rounded bg-gray-700 hover:bg-gray-600 text-white transition-colors cursor-pointer min-h-[44px]"
-            onClick={() => onSelectOption(primaryText)}
+            onClick={() => onSelectOption(option)}
             role="option"
             aria-selected={false}
             tabIndex={0}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
-                onSelectOption(primaryText);
+                onSelectOption(option);
               }
             }}
           >

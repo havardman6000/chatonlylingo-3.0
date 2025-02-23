@@ -56,11 +56,15 @@ export interface ChatMessageProps {
   message: ChatMessage;
   avatarSrc?: string;
   language: SupportedLanguage;
+  onPlayAudio: (text: string) => Promise<void>; // Add onPlayAudio
+  audioPlaying: boolean; // Add audioPlaying
 }
 
 export interface ChatOptionsProps {
   options: ChatOption[];
   onSelectOption: (option: ChatOption) => void;
+  onPlayAudio: (text: string) => Promise<void>; // Add onPlayAudio
+  audioPlaying: boolean; // Add audioPlaying
 }
 
 export interface Scene {

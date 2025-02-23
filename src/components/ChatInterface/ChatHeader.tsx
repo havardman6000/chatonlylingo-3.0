@@ -1,11 +1,15 @@
+// src/components/ChatInterface/ChatHeader.tsx
+
 export function ChatHeader({
   characterName,
+  characterId, // Add characterId prop here
   happiness,
   onBack
 }: {
-  characterName: string,
-  happiness: number,
-  onBack: () => void
+  characterName: string;
+  characterId: string; // Add characterId type here
+  happiness: number;
+  onBack: () => void;
 }) {
   return (
     <div className="chat-header-container">
@@ -108,3 +112,4 @@ export function ChatHeader({
     </div>
   );
 }
+// src/components/ChatInterface/ChatHeader.tsx
