@@ -9,6 +9,7 @@ import { useChatStore } from '@/store/chatStore';
 import { characters } from '@/data/characters';
 import type { CharacterId, ChatMessage, ChatOption } from '@/types/chat';
 
+import { ChatCompletionPopup } from '../ChatCompletionPopup';
 interface ChatInterfaceProps {
   characterId: CharacterId;
 }
@@ -23,6 +24,7 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [currentVideo, setCurrentVideo] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [showCompletionPopup, setShowCompletionPopup] = useState(false);
 
   const character = characters[characterId];
   const currentSceneData = character?.scenes[currentScene];
@@ -82,9 +84,12 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
 
       if (currentScene >= 5) {
         setIsTransitioning(true);
-        setTimeout(() => {
+        setShowCompletionPopup(true);
+      
+        // Remove this section that automatically navigates:
+        /*setTimeout(() => {
           router.push(`/chat/${character.language}`);
-        }, 1000);
+        }, 1000);*/
       } else {
         setIsTransitioning(true);
         setTimeout(() => {
@@ -235,6 +240,12 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
           </div>
         </div>
       </div>
+      <ChatCompletionPopup
+      isOpen={showCompletionPopup}
+      onClose={() => setShowCompletionPopup(false)}
+      language={character?.language || 'chinese'}
+      tutorName={character?.name || ''}
+    />
     </div>
   );
 }
