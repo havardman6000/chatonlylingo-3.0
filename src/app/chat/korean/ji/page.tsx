@@ -1,42 +1,30 @@
-'use client'
+'use client';
 
-import  {ChatInterface}  from '@/components/ChatInterface'
-import { useWeb3 } from '@/components/providers/web3-provider'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { useChatStore } from '@/store/chatStore'
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import ChatInterface from '@/components/ChatInterface';
+import { characters } from '@/data/characters';
+import type { CharacterId } from '@/types/chat';
 
 export default function JiChatPage() {
-  const { isConnected } = useWeb3()
-  const router = useRouter()
-  const { selectedCharacter, actions } = useChatStore()
-  const tutorId = 'ji' // Hardcoded tutor ID for ji
+  const router = useRouter();
+  const tutorId: CharacterId = 'ji';
+  const tutor = characters[tutorId];
 
+  // Validate the tutor exists and matches the language
   useEffect(() => {
-    if (!isConnected) {
-      router.push('/')
-      return
+    if (!tutor || tutor.language !== 'korean') {
+      router.push('/chat/korean');
     }
+  }, [tutor, router]);
 
-    if (!selectedCharacter || selectedCharacter !== tutorId) {
-      console.log('Initializing chat with tutor:', tutorId)
-      actions.reset()
-      actions.selectCharacter(tutorId)
-    }
-  }, [isConnected, selectedCharacter, tutorId, actions, router])
-
-  if (!isConnected || !selectedCharacter) {
+  if (!tutor) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
         <div className="text-white text-xl">Loading...</div>
       </div>
-    )
+    );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-900">
-      <ChatInterface />
-    </div>
-  )
+  return <ChatInterface characterId={tutorId} />;
 }
-//src/app/chat/korean/ji/page.tsx

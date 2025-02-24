@@ -1,86 +1,87 @@
-// src/components/ChatInterface/ChatMessage.tsx
+import { ChatMessage, SupportedLanguage } from '@/types/chat';
 
-import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Avatar } from '@/components/ui/avatar';
-import type { ChatMessageProps } from '@/types/chat';
+interface ChatMessageProps {
+  message: ChatMessage;
+  avatarSrc?: string;
+  language: SupportedLanguage;
+}
 
-export const ChatMessageComponent: React.FC<ChatMessageProps> = ({
-  message,
-  avatarSrc,
-  onPlayAudio,
-  audioPlaying
-}) => {
-  const getMainText = () => {
+export function ChatMessageComponent({ message, avatarSrc, language }: ChatMessageProps) {
+  const isUserMessage = message.role === 'user';
+
+  const getPrimaryText = () => {
     const content = message.content;
-    return content.chinese ||
-           content.japanese ||
-           content.korean ||
-           content.spanish ||
-           content.english;
+    return content[language] || content.english;
   };
 
   const getPronunciation = () => {
     const content = message.content;
-    return content.pinyin ||
-           content.romaji ||
-           content.romanized ||
-           null;
+    switch (language) {
+      case 'chinese':
+        return content.pinyin;
+      case 'japanese':
+        return content.romaji;
+      case 'korean':
+        return content.romanized;
+      default:
+        return null;
+    }
   };
 
-  const mainText = getMainText();
-  const pronunciation = getPronunciation();
-  const isUserMessage = message.role === 'user';
-
   return (
-    <div
-      className={`flex items-start space-x-2 max-w-full sm:max-w-[80%] ${isUserMessage ? 'ml-auto' : ''}`}
-      role="listitem"
-    >
-      {message.role === 'assistant' && (
-        <Avatar className="w-8 h-8 flex-shrink-0">
-          {avatarSrc && <img src={avatarSrc} alt="Tutor" className="w-full h-full object-cover rounded-full" />}
-        </Avatar>
+    <div className={`flex ${isUserMessage ? 'justify-end' : 'justify-start'} mb-4`}>
+      {!isUserMessage && avatarSrc && (
+        <div className="flex-shrink-0 mr-3">
+          <img
+            src={avatarSrc}
+            alt="Tutor"
+            className="w-8 h-8 rounded-full"
+          />
+        </div>
       )}
-      <div className={`rounded-lg p-3 ${isUserMessage ? 'bg-green-600 text-white' : 'bg-gray-700 text-white'}`} aria-label={`${isUserMessage ? 'You' : 'Tutor'}: ${mainText}`}>
-        <div className="flex flex-col">
-          <div className="flex items-start justify-between gap-2 flex-wrap sm:flex-nowrap">
-            <div className="max-w-full overflow-hidden">
-              <p className="text-base break-words">{mainText}</p>
-              {pronunciation && (
-                <p className="text-sm opacity-90 mt-1" aria-label={`Pronunciation: ${pronunciation}`}>
-                  {pronunciation}
-                </p>
-              )}
-              {message.content.english && message.content.english !== mainText && (
-                <p className="text-sm mt-1" aria-label={`Translation: ${message.content.english}`}>
-                  {message.content.english}
-                </p>
-              )}
-              {message.content.context && (
-                <p className="text-sm italic mt-2 opacity-75" aria-label={`Context: ${message.content.context}`}>
-                  {message.content.context}
-                </p>
-              )}
-            </div>
-            {mainText && (
-              <Button
-                size="sm"
-                variant="secondary"
-                className="ml-2 p-1 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors flex-shrink-0 min-h-[36px] min-w-[36px]"
-                onClick={() => onPlayAudio(mainText)}
-                disabled={audioPlaying}
-                aria-label={`Play audio ${audioPlaying ? '(playing)' : ''}`}
-              >
-                <span aria-hidden="true">{audioPlaying ? '🔊' : '🔈'}</span>
-              </Button>
+
+      <div 
+        className={`relative max-w-[80%] px-4 py-3 rounded-lg 
+          ${isUserMessage ? 'bg-green-600' : 'bg-gray-700'} text-white`}
+      >
+        <div className="flex items-start gap-3">
+          <div className="flex-1">
+            <p className="text-base">{getPrimaryText()}</p>
+            
+            {getPronunciation() && (
+              <p className="text-sm text-gray-300 mt-1">
+                {getPronunciation()}
+              </p>
+            )}
+            
+            {message.content.english && language !== 'english' && !isUserMessage && (
+              <p className="text-sm text-gray-300 mt-1">
+                {message.content.english}
+              </p>
+            )}
+            
+            {message.content.context && (
+              <p className="text-sm italic text-gray-400 mt-2">
+                {message.content.context}
+              </p>
             )}
           </div>
+
+          {!isUserMessage && (
+            <button 
+              className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors flex items-center justify-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                // Audio functionality handled by parent
+              }}
+            >
+              <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            </button>
+          )}
         </div>
       </div>
     </div>
   );
-};
-
-export default ChatMessageComponent;
-// src/components/ChatInterface/ChatMessage.tsx
+}

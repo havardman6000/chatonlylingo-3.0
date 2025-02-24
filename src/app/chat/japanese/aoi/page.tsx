@@ -1,42 +1,37 @@
-'use client'
-// src/app/chat/japanese/aoi/page.tsx
+'use client';
 
-import { ChatInterface } from '@/components/ChatInterface'
-import { useWeb3 } from '@/components/providers/web3-provider'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { useChatStore } from '@/store/chatStore'
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import ChatInterface from '@/components/ChatInterface';
+import { useChatStore } from '@/store/chatStore';
+import { characters } from '@/data/characters';
+import type { CharacterId } from '@/types/chat';
 
 export default function AoiChatPage() {
-  const { isConnected } = useWeb3()
-  const router = useRouter()
-  const { selectedCharacter, actions } = useChatStore()
-  const tutorId = 'aoi' // Hardcoded tutor ID for Aoi
+  const router = useRouter();
+  const { selectedCharacter, actions } = useChatStore();
+  const tutorId: CharacterId = 'aoi';
+  const tutor = characters[tutorId];
 
   useEffect(() => {
-    if (!isConnected) {
-      router.push('/')
-      return
+    if (!tutor || tutor.language !== 'japanese') {
+      router.push('/chat/japanese');
+      return;
     }
 
     if (!selectedCharacter || selectedCharacter !== tutorId) {
-      console.log('Initializing chat with tutor:', tutorId)
-      actions.reset()
-      actions.selectCharacter(tutorId)
+      actions.reset();
+      actions.selectCharacter(tutorId);
     }
-  }, [isConnected, selectedCharacter, tutorId, actions, router])
+  }, [selectedCharacter, tutorId, actions, router, tutor]);
 
-  if (!isConnected || !selectedCharacter) {
+  if (!tutor) {
     return (
-      <div className="min-h-screen bg-red-50 flex items-center justify-center">
-        <div className="text-gray-600 text-xl">Loading...</div>
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-xl">Loading...</div>
       </div>
-    )
+    );
   }
 
-  return (
-    <div className="min-h-screen bg-red-50">
-      <ChatInterface />
-    </div>
-  )
+  return <ChatInterface characterId={tutorId} />;
 }

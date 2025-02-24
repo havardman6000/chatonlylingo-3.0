@@ -1,82 +1,86 @@
-import { useState } from 'react';
-import { Button } from '../ui/button';
-import { ChatOptionsProps, ChatOption } from '@/types/chat';
+import { ChatOption } from '@/types/chat';
 
-export function ChatOptions({
-  options,
-  onSelectOption,
-  onPlayAudio,
-  audioPlaying
-}: ChatOptionsProps) {
-  const [isExpanded, setIsExpanded] = useState(true);
+interface ChatOptionsProps {
+  options: ChatOption[];
+  onSelectOption: (option: ChatOption) => void;
+}
 
-  const toggleOptions = () => {
-    setIsExpanded(!isExpanded);
-  };
-
+export function ChatOptions({ options, onSelectOption }: ChatOptionsProps) {
   const getPrimaryText = (option: ChatOption) => {
-    return option.chinese || option.japanese || option.korean || option.spanish || '';
+    return option.chinese ||
+           option.japanese ||
+           option.korean ||
+           option.spanish ||
+           option.english;
   };
 
-  const getPronunciationText = (option: ChatOption) => {
-    return option.pinyin || option.romaji || option.romanized || '';
+  const getPronunciation = (option: ChatOption) => {
+    return option.pinyin ||
+           option.romaji ||
+           option.romanized ||
+           '';
   };
 
   return (
-    <div className="space-y-2" role="listbox" aria-label="Response options">
-      <Button
-        onClick={toggleOptions}
-        className="flex items-center justify-between w-full p-2 bg-gray-700 hover:bg-gray-600 text-white transition-colors"
-      >
-        <span>Options</span>
-        <span className="ml-2">{isExpanded ? '▲' : '▼'}</span>
-      </Button>
-      {isExpanded && options.map((option, index) => {
-        const primaryText = getPrimaryText(option);
-        const pronunciationText = getPronunciationText(option);
-        const optionId = `option-${index}`;
-
-        return (
-          <div
-            key={index}
-            id={optionId}
-            className="w-full text-left p-2 rounded bg-gray-700 hover:bg-gray-600 text-white transition-colors cursor-pointer min-h-[44px]"
-            onClick={() => onSelectOption(option)}
-            role="option"
-            aria-selected={false}
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                onSelectOption(option);
-              }
-            }}
-          >
-            <div className="flex justify-between items-center">
-              <div className="flex-1">
-                <p className="text-sm">{primaryText}</p>
-                {pronunciationText && (
-                  <p className="text-xs text-gray-300">{pronunciationText}</p>
-                )}
-                <p className="text-xs text-gray-400">{option.english}</p>
-              </div>
-              <Button
-                size="sm"
-                variant="secondary"
-                className="ml-2 p-1 rounded-full bg-blue-500 text-white hover:bg-blue-600 transition-colors min-h-[36px] min-w-[36px]"
+    <div className="space-y-2">
+      {options.map((option, index) => (
+        <div
+          key={index}
+          className="w-full text-left p-3 rounded-lg bg-gray-800 hover:bg-gray-700 transition-colors duration-200 cursor-pointer"
+          onClick={() => onSelectOption(option)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              onSelectOption(option);
+            }
+          }}
+        >
+          <div className="flex justify-between items-start">
+            <div className="flex-1 space-y-1">
+              <p className="text-white text-base">
+                {getPrimaryText(option)}
+              </p>
+              {getPronunciation(option) && (
+                <p className="text-gray-400 text-sm">
+                  {getPronunciation(option)}
+                </p>
+              )}
+              {option.english && (
+                <p className="text-gray-400 text-sm">
+                  {option.english}
+                </p>
+              )}
+            </div>
+            
+            <div className="flex-shrink-0 ml-3">
+              <div
+                className="w-6 h-6 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 transition-colors cursor-pointer"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onPlayAudio(primaryText);
+                  // Audio functionality handled by parent component
                 }}
-                disabled={audioPlaying}
-                aria-label={`Play audio for ${option.english}`}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.stopPropagation();
+                    // Audio functionality handled by parent component
+                  }
+                }}
               >
-                <span aria-hidden="true">🔊</span>
-              </Button>
+                <svg 
+                  className="w-3 h-3 text-white" 
+                  viewBox="0 0 24 24" 
+                  fill="currentColor"
+                >
+                  <path d="M8 5v14l11-7z"/>
+                </svg>
+              </div>
             </div>
           </div>
-        );
-      })}
+        </div>
+      ))}
     </div>
   );
-}
-// src/components/ChatInterface/ChatOptions.tsx
+}//src/components/ChatInterface/ChatOptions.tsx

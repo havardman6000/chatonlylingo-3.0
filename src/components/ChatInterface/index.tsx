@@ -1,32 +1,36 @@
+'use client';
+
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChatMessageComponent } from './ChatMessage';
 import { ChatOptions } from './ChatOptions';
-import { ChatHeader } from './ChatHeader';
+import ChatHeader from './ChatHeader';
 import { ChatCompletionPopup } from '../ChatCompletionPopup';
 import { VideoPlayer } from './VideoPlayer';
 import { useChatStore } from '@/store/chatStore';
 import { characters } from '@/data/characters';
 import type { CharacterId, ChatMessage, ChatOption } from '@/types/chat';
-import chatService from '@/services/chatService';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 
-export default function ChatInterface({ characterId }: { characterId: CharacterId }) {
+interface ChatInterfaceProps {
+  characterId: CharacterId;
+}
+
+export default function ChatInterface({ characterId }: ChatInterfaceProps) {
   const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { selectedCharacter, messages, currentScene, happiness, actions } = useChatStore();
+
+  const [input, setInput] = useState('');
+  const [showOptions, setShowOptions] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showCompletionPopup, setShowCompletionPopup] = useState(false);
   const [currentVideo, setCurrentVideo] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [audioPlaying, setAudioPlaying] = useState(false);
-  const [userInput, setUserInput] = useState('');
 
   const character = characters[characterId];
   const currentSceneData = character?.scenes[currentScene];
 
+  // Initialize chat
   useEffect(() => {
     if (!selectedCharacter || selectedCharacter !== characterId) {
       actions.reset();
@@ -34,48 +38,67 @@ export default function ChatInterface({ characterId }: { characterId: CharacterI
     }
   }, [selectedCharacter, characterId, actions]);
 
+  // Scroll to bottom on new messages
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  useEffect(() => {
-    if (characterId && currentScene) {
-      localStorage.setItem(`chat_progress_${characterId}`, JSON.stringify({
-        currentScene,
-        happiness: happiness[characterId],
-        lastUpdated: Date.now()
-      }));
-    }
-  }, [characterId, currentScene, happiness]);
+  const getPrimaryText = (option: ChatOption) => {
+    return option.chinese ||
+           option.japanese ||
+           option.korean ||
+           option.spanish ||
+           option.english;
+  };
 
-  const handleOptionSelect = async (option: ChatOption) => {
-    if (isTransitioning || isLoading) return;
+  const handleOptionSelect = (option: ChatOption) => {
+    setInput(getPrimaryText(option));
+    setShowOptions(false);
+  };
+
+  const handleSend = async () => {
+    if (isTransitioning || !input.trim()) return;
     setError(null);
-    setIsLoading(true);
 
     try {
+      const selectedOption = currentSceneData?.options.find(opt => 
+        getPrimaryText(opt) === input.trim()
+      );
+
+      if (!selectedOption) {
+        setError('Please select a valid response option');
+        return;
+      }
+
+      // Add user message
       actions.addMessage({
         role: 'user',
-        content: option
+        content: selectedOption
       });
 
+      setInput('');
+
+      // Wait for animation
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      if (option.response) {
+      // Add assistant response if available
+      if (selectedOption.response) {
         actions.addMessage({
           role: 'assistant',
-          content: option.response
+          content: selectedOption.response
         });
 
-        if (option.response.video) {
-          setCurrentVideo(option.response.video);
+        if (selectedOption.response.video) {
+          setCurrentVideo(selectedOption.response.video);
         }
       }
 
-      if (typeof option.points === 'number') {
-        actions.updateHappiness(characterId, option.points);
+      // Update happiness if points provided
+      if (typeof selectedOption.points === 'number') {
+        actions.updateHappiness(characterId, selectedOption.points);
       }
 
+      // Handle scene transition
       if (currentScene >= 5) {
         setShowCompletionPopup(true);
       } else {
@@ -83,171 +106,107 @@ export default function ChatInterface({ characterId }: { characterId: CharacterI
         setTimeout(() => {
           actions.setScene(currentScene + 1);
           setIsTransitioning(false);
+          setShowOptions(true);
         }, 1000);
       }
     } catch (error) {
-      setError('Failed to process response. Please try again.');
-    } finally {
-      setIsLoading(false);
+      console.error('Failed to process response:', error);
+      setError('Failed to process response');
     }
   };
-
-  const handleCompletionClose = () => {
-    if (characterId) {
-      localStorage.setItem(`chat_completed_${characterId}`, 'true');
-    }
-    setShowCompletionPopup(false);
-    router.push(`/chat/${character?.language}`);
-  };
-
-  const handleBack = () => {
-    if (character?.language) {
-      router.push(`/chat/${character.language}`);
-    }
-  };
-
-  const onPlayAudio = async (text: string) => {
-    setAudioPlaying(true);
-    try {
-      const audioUrl = await chatService.generateAudio(text, character.language);
-      if (audioUrl) {
-        const audio = new Audio(audioUrl);
-        audio.play();
-        audio.onended = () => setAudioPlaying(false);
-      } else {
-        console.error('Audio URL is null');
-        setAudioPlaying(false);
-      }
-    } catch (error) {
-      console.error('Error playing audio:', error);
-      setAudioPlaying(false);
-    }
-  };
-
-  const handleSendMessage = async () => {
-    if (userInput.trim() === '') return;
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const response = await chatService.processMessage(userInput, characterId, currentScene);
-      actions.addMessage({
-        role: 'user',
-        content: { english: userInput }
-      });
-
-      if (response.type === 'success') {
-        actions.addMessage({
-          role: 'assistant',
-          content: response.content.message
-        });
-
-        if (response.content.video) {
-          setCurrentVideo(response.content.video);
-        }
-
-        if (typeof response.content.points === 'number') {
-          actions.updateHappiness(characterId, response.content.points);
-        }
-
-        if (response.content.nextScene !== currentScene) {
-          setIsTransitioning(true);
-          setTimeout(() => {
-            actions.setScene(response.content.nextScene);
-            setIsTransitioning(false);
-          }, 1000);
-        }
-      }
-    } catch (error) {
-      setError('Failed to process response. Please try again.');
-    } finally {
-      setIsLoading(false);
-      setUserInput('');
-    }
-  };
-
-  if (!character) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Loading...</div>
-      </div>
-    );
-  }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-900">
+    <div className="flex flex-col h-screen bg-[#1a1b1e]">
       <ChatHeader
-        characterName={character.name}
-        characterId={characterId}
-        happiness={happiness[characterId] || 50}
-        onBack={handleBack}
-      />
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+  characterName={character?.name || ''}
+  characterId={characterId}
+  happiness={happiness[characterId] || 50}
+/>
+
+      <div className="flex-1 relative">
+        {/* Video Container */}
         {currentVideo && (
-          <div className="sticky top-0 z-10 pb-4">
-            <VideoPlayer src={currentVideo} />
+          <div className="sticky top-0 z-10 w-full bg-black/50">
+            <div className="max-w-lg mx-auto p-2">
+              <VideoPlayer src={currentVideo} />
+            </div>
           </div>
         )}
-        {messages.map((message, index) => (
-          <ChatMessageComponent
-            key={index}
-            message={message as ChatMessage}
-            language={character.language}
-            avatarSrc={character.image}
-            onPlayAudio={onPlayAudio}
-            audioPlaying={audioPlaying}
-          />
-        ))}
-        <div ref={messagesEndRef} />
+
+        {/* Messages Container */}
+        <div className="flex-1 overflow-y-auto px-4">
+          {messages.map((message, index) => (
+            <ChatMessageComponent
+              key={index}
+              message={message as ChatMessage}
+              avatarSrc={character?.image}
+              language={character?.language || 'chinese'}
+            />
+          ))}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
+
+      {/* Error Message */}
       {error && (
-        <div className="px-4 py-2 bg-red-600 text-white text-center">
+        <div className="bg-red-600/90 text-white text-center py-2 px-4">
           {error}
         </div>
       )}
-      <div className="p-4 flex flex-col items-center relative">
-        {currentSceneData?.options && (
-          <div className="w-full max-w-lg mb-4">
+
+      {/* Input Area */}
+      <div className="border-t border-gray-800 bg-[#1a1b1e]">
+        <div className="p-4 space-y-4">
+          {showOptions && currentSceneData?.options && (
             <ChatOptions
               options={currentSceneData.options}
               onSelectOption={handleOptionSelect}
-              onPlayAudio={onPlayAudio}
-              audioPlaying={audioPlaying}
             />
+          )}
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowOptions(!showOptions)}
+              className="p-2 text-gray-400 hover:text-white rounded-full transition-colors"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+
+            <input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type or select a message..."
+              className="flex-1 bg-gray-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+
+            <button
+              onClick={handleSend}
+              disabled={!input.trim() || isTransitioning}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                input.trim() && !isTransitioning
+                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                  : 'bg-gray-700 text-gray-400 cursor-not-allowed'
+              }`}
+            >
+              Send
+            </button>
           </div>
-        )}
-        <div className="flex items-center space-x-2 w-full">
-          <Input
-            type="text"
-            value={userInput}
-            onChange={(e) => setUserInput(e.target.value)}
-            placeholder="Type a message..."
-            className="flex-1 bg-gray-800 text-white rounded-lg px-4 py-3 focus:outline-none"
-          />
-          <Button
-            onClick={handleSendMessage}
-            disabled={isLoading}
-            className="bg-blue-500 text-white hover:bg-blue-600 flex items-center"
-          >
-            <img src="/path-to-second-image-logo.png" alt="Send" className="w-6 h-6 mr-2" />
-            Send
-          </Button>
         </div>
       </div>
+
+      {/* Completion Popup */}
       {showCompletionPopup && character && (
         <ChatCompletionPopup
           language={character.language}
-          onClose={handleCompletionClose}
+          onClose={() => {
+            setShowCompletionPopup(false);
+            router.push(`/chat/${character.language}`);
+          }}
         />
-      )}
-      {isLoading && (
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-          <div className="bg-white/10 rounded-full p-3">
-            <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
-          </div>
-        </div>
       )}
     </div>
   );
 }
-// src/components/ChatInterface/index.tsx

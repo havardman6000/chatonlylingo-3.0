@@ -1,115 +1,65 @@
 // src/components/ChatInterface/ChatHeader.tsx
+import { useRouter } from 'next/navigation';
 
-export function ChatHeader({
-  characterName,
-  characterId, // Add characterId prop here
-  happiness,
-  onBack
-}: {
+interface ChatHeaderProps {
   characterName: string;
-  characterId: string; // Add characterId type here
+  characterId: string;
   happiness: number;
-  onBack: () => void;
-}) {
+}
+
+export default function ChatHeader({
+  characterName,
+  characterId,
+  happiness
+}: ChatHeaderProps) {
+  const router = useRouter();
+
+  const getHappinessColor = () => {
+    if (happiness >= 80) return 'bg-green-500';
+    if (happiness >= 60) return 'bg-blue-500';
+    if (happiness >= 40) return 'bg-yellow-500';
+    if (happiness >= 20) return 'bg-orange-500';
+    return 'bg-red-500';
+  };
+
   return (
-    <div className="chat-header-container">
-      <div className="header-main">
+    <div className="bg-gray-900 border-b border-gray-800">
+      <div className="px-4 py-3 flex items-center">
         <button
-          onClick={onBack}
-          className="back-button"
-          aria-label="Go back"
+          onClick={() => router.push('/')}
+          className="p-2 text-gray-400 hover:text-white rounded-full transition-colors"
+          aria-label="Go back to home"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="back-icon" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clipRule="evenodd" />
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
           </svg>
         </button>
 
-        <div className="character-info">
-          <h1 className="character-name">
+        <div className="flex-1 text-center">
+          <h1 className="text-xl font-semibold text-white">
             {characterName}
           </h1>
-          <div className="happiness-meter">
-            <span className="status-indicator"></span>
-            <span className="happiness-text">
-              Happiness: {happiness}
+          <div className="flex items-center justify-center gap-2 mt-1">
+            <div className={`w-2 h-2 rounded-full ${getHappinessColor()}`} />
+            <span className="text-sm text-gray-400">
+              Happiness: {happiness}%
             </span>
           </div>
         </div>
+
+        <div className="w-10" />
       </div>
-
-      <style jsx>{`
-        .chat-header-container {
-          display: flex;
-          flex-direction: column;
-          width: 100%;
-          background-color: #1f2937;
-        }
-
-        .header-main {
-          display: flex;
-          align-items: center;
-          padding: 8px 12px;
-          position: relative;
-        }
-
-        .back-button {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          width: 36px;
-          height: 36px;
-          background: rgba(59, 130, 246, 0.8);
-          border-radius: 50%;
-          color: white;
-          flex-shrink: 0;
-        }
-
-        .back-icon {
-          width: 20px;
-          height: 20px;
-        }
-
-        .character-info {
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          flex-grow: 1;
-          text-align: center;
-        }
-
-        .character-name {
-          font-size: 18px;
-          font-weight: 600;
-          color: white;
-          margin: 0;
-        }
-
-        .happiness-meter {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          background-color: rgba(55, 65, 81, 0.8);
-          padding: 4px 12px;
-          border-radius: 9999px;
-          color: white;
-          font-size: 13px;
-          margin-top: 4px;
-        }
-
-        .status-indicator {
-          width: 8px;
-          height: 8px;
-          border-radius: 50%;
-          background-color: ${happiness > 70 ? '#10b981' :
-                              happiness > 40 ? '#f59e0b' :
-                              '#ef4444'};
-        }
-
-        .happiness-text {
-          white-space: nowrap;
-        }
-      `}</style>
     </div>
   );
-}
-// src/components/ChatInterface/ChatHeader.tsx
+}//src/components/ChatInterface/ChatHeader.tsx

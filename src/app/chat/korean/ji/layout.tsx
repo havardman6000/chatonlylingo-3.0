@@ -1,35 +1,12 @@
-// src/app/chat/chinese/mei/layout.tsx
-'use client'
+// src/app/chat/[language]/[tutor]/layout.tsx
+'use client';
 
-import { useWeb3 } from '@/components/providers/web3-provider'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import EnhancedWalletConnector   from '@/components/EnhancedWalletConnector'
+import React from 'react';
 
-export default function JiLayout({
+export default function TutorLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const { isConnected } = useWeb3()
-  const router = useRouter()
-
-  useEffect(() => {
-    if (!isConnected) {
-      router.push('/')
-    }
-  }, [isConnected, router])
-
-  return (
-    <div className="min-h-screen">
-      {isConnected ? children : (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-xl text-gray-700">
-            Please connect your wallet to continue...
-          </div>
-        </div>
-      )}
-    </div>
-  )
+  return <div className="min-h-screen">{children}</div>;
 }
-// src/app/chat/korean/ji/layout.tsx
