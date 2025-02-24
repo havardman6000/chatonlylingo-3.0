@@ -1,3 +1,4 @@
+// src/components/ChatInterface/index.tsx
 import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChatMessageComponent } from './ChatMessage';
@@ -17,7 +18,7 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { selectedCharacter, messages, currentScene, happiness, actions } = useChatStore();
   const [input, setInput] = useState('');
-  const [showOptions, setShowOptions] = useState(true);
+  const [showOptions, setShowOptions] = useState(false); // Options are not expanded by default
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [currentVideo, setCurrentVideo] = useState<string | null>(null);
@@ -35,7 +36,6 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
     setError(null);
 
     try {
-      // Find matching option from current scene
       const selectedOption = currentSceneData?.options.find(opt => {
         const primaryText = opt.chinese || opt.japanese || opt.korean || opt.spanish || opt.english;
         return primaryText === input.trim();
@@ -46,52 +46,43 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
         return;
       }
 
-      // Add user message
       actions.addMessage({
         role: 'user',
         content: selectedOption
       });
 
       setInput('');
-      setShowOptions(false);
+      setShowOptions(false); // Close options after sending a message
 
-      // Add response after a short delay
       await new Promise(resolve => setTimeout(resolve, 500));
-
       if (selectedOption.response) {
         actions.addMessage({
           role: 'assistant',
           content: selectedOption.response
         });
 
-        // Handle video if present
         if (selectedOption.response.video) {
           setCurrentVideo(selectedOption.response.video);
         }
 
-        // Play audio for the response
-        const primaryResponseText = selectedOption.response.chinese || 
-                                  selectedOption.response.japanese || 
-                                  selectedOption.response.korean || 
-                                  selectedOption.response.spanish || 
-                                  selectedOption.response.english;
-        
+        const primaryResponseText = selectedOption.response.chinese ||
+                                    selectedOption.response.japanese ||
+                                    selectedOption.response.korean ||
+                                    selectedOption.response.spanish ||
+                                    selectedOption.response.english;
+
         if (primaryResponseText) {
           await handlePlayAudio(primaryResponseText);
         }
       }
 
-      // Update happiness if points provided
       if (typeof selectedOption.points === 'number') {
         actions.updateHappiness(characterId, selectedOption.points);
       }
 
-      // Handle scene transition
       if (currentScene >= 5) {
-        // Handle chat completion
         setIsTransitioning(true);
         setTimeout(() => {
-          // Navigate or show completion dialog
           router.push(`/chat/${character.language}`);
         }, 1000);
       } else {
@@ -99,7 +90,6 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
         setTimeout(() => {
           actions.setScene(currentScene + 1);
           setIsTransitioning(false);
-          setShowOptions(true);
         }, 1000);
       }
 
@@ -118,18 +108,18 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
       const response = await fetch('/api/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           text,
           language: character?.language || 'chinese'
         }),
       });
 
       if (!response.ok) throw new Error('TTS failed');
-      
+
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
       const audio = new Audio(audioUrl);
-      
+
       audio.onended = () => {
         setAudioPlaying(false);
         URL.revokeObjectURL(audioUrl);
@@ -148,10 +138,10 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
   }, [messages]);
 
   const handleOptionSelect = (option: ChatOption) => {
-    const primaryText = option.chinese || 
-                       option.japanese || 
-                       option.korean || 
-                       option.spanish || 
+    const primaryText = option.chinese ||
+                       option.japanese ||
+                       option.korean ||
+                       option.spanish ||
                        option.english;
     setInput(primaryText);
     setShowOptions(false);
@@ -167,7 +157,7 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
           happiness={happiness[characterId] || 50}
         />
       </div>
-  
+
       {/* Scrollable Content Area */}
       <div className="flex-1 overflow-y-auto">
         {/* Initial spacing from header */}
@@ -178,38 +168,28 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
               <VideoPlayer src={currentVideo} />
             </div>
           )}
-  
+
           {/* Messages with correct spacing */}
           <div className={`px-4 ${currentVideo ? 'mt-2.5' : 'mt-2.5'}`}>
             {messages.map((message, index) => (
-              <ChatMessageComponent
-                key={index}
-                message={message as ChatMessage}
-                avatarSrc={character?.image}
-                language={character?.language || 'chinese'}
-                onPlayAudio={handlePlayAudio}
-                audioPlaying={audioPlaying}
-              />
+              <div key={index} className="chat-message-container">
+                <ChatMessageComponent
+                  message={message as ChatMessage}
+                  avatarSrc={character?.image}
+                  language={character?.language || 'chinese'}
+                  onPlayAudio={handlePlayAudio}
+                  audioPlaying={audioPlaying}
+                />
+              </div>
             ))}
             <div ref={messagesEndRef} />
           </div>
         </div>
       </div>
-  
+
       {/* Fixed Input Area */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#1a1b1e] border-t border-gray-800">
         <div className="p-4">
-          {showOptions && currentSceneData?.options && (
-            <div className="mb-4">
-              <ChatOptions
-                options={currentSceneData.options}
-                onSelectOption={handleOptionSelect}
-                onPlayAudio={handlePlayAudio}
-                audioPlaying={audioPlaying}
-              />
-            </div>
-          )}
-  
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowOptions(!showOptions)}
@@ -219,7 +199,7 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-  
+
             <input
               type="text"
               value={input}
@@ -227,7 +207,7 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
               placeholder="Type or select a message..."
               className="flex-1 bg-gray-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-  
+
             <button
               onClick={handleSend}
               disabled={!input.trim() || isTransitioning}
@@ -240,9 +220,21 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
               Send
             </button>
           </div>
+
+          {/* Chat Options */}
+          {showOptions && currentSceneData?.options && (
+            <div className="chat-options-container mt-4">
+              <ChatOptions
+                options={currentSceneData.options}
+                onSelectOption={handleOptionSelect}
+                onPlayAudio={handlePlayAudio}
+                audioPlaying={audioPlaying}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
-
-}//src/components/ChatInterface/index.tsx
+}
+//src/components/ChatInterface/index.tsx
