@@ -2,13 +2,11 @@ import React, { useEffect, useRef } from 'react';
 
 interface VideoPlayerProps {
   src: string;
-  className?: string;
   ariaLabel?: string;
 }
 
 export const VideoPlayer = ({
   src,
-  className = "w-full h-full object-cover",
   ariaLabel = "Chat video"
 }: VideoPlayerProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -22,52 +20,60 @@ export const VideoPlayer = ({
     };
 
     video.addEventListener('error', handleError);
-
-    return () => {
-      video.removeEventListener('error', handleError);
-    };
+    return () => video.removeEventListener('error', handleError);
   }, [src]);
 
   return (
-    <div className="video-container">
-      <video
-        ref={videoRef}
-        src={src}
-        autoPlay
-        loop
-        muted
-        playsInline
-        aria-label={ariaLabel}
-      >
-        <p>Your browser doesn't support HTML5 video.</p>
-      </video>
+    <div className="video-wrapper">
+      <div className="video-container">
+        <video
+          ref={videoRef}
+          src={src}
+          autoPlay
+          loop
+          muted
+          playsInline
+          aria-label={ariaLabel}
+        />
+      </div>
 
       <style jsx>{`
+        .video-wrapper {
+          width: 100%;
+          padding: 0;
+          margin: 0;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
         .video-container {
           width: 100%;
-          max-width: 100%;
-          position: relative;
+          max-width: 300px;
           aspect-ratio: 16/9;
+          background-color: #000;
+          display: flex;
+          justify-content: center;
+          align-items: center;
           overflow: hidden;
           border-radius: 8px;
-          background-color: #000;
         }
 
         video {
-          width: 100%;
-          height: auto;
-          object-fit: cover;
-          max-height: 20vh; /* Adjust the height as needed */
+          width: auto;
+          height: 100%;
+          max-height: 160px;
+          aspect-ratio: 1/1;
+          object-fit: contain;
         }
 
         @media (min-width: 640px) {
           .video-container {
-            max-width: 480px;
-            margin: 0 auto;
+            max-width: 280px;
           }
 
           video {
-            max-height: 30vh;
+            max-height: 150px;
           }
         }
       `}</style>

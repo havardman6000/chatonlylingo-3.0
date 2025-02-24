@@ -1,11 +1,8 @@
-'use client';
-
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { ChatMessageComponent } from './ChatMessage';
 import { ChatOptions } from './ChatOptions';
 import ChatHeader from './ChatHeader';
-import { ChatCompletionPopup } from '../ChatCompletionPopup';
 import { VideoPlayer } from './VideoPlayer';
 import { useChatStore } from '@/store/chatStore';
 import { characters } from '@/data/characters';
@@ -19,51 +16,30 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
   const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { selectedCharacter, messages, currentScene, happiness, actions } = useChatStore();
-
   const [input, setInput] = useState('');
   const [showOptions, setShowOptions] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [showCompletionPopup, setShowCompletionPopup] = useState(false);
+  const [audioPlaying, setAudioPlaying] = useState(false);
   const [currentVideo, setCurrentVideo] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const character = characters[characterId];
   const currentSceneData = character?.scenes[currentScene];
 
-  // Initialize chat
-  useEffect(() => {
-    if (!selectedCharacter || selectedCharacter !== characterId) {
-      actions.reset();
-      actions.selectCharacter(characterId);
-    }
-  }, [selectedCharacter, characterId, actions]);
-
-  // Scroll to bottom on new messages
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  const getPrimaryText = (option: ChatOption) => {
-    return option.chinese ||
-           option.japanese ||
-           option.korean ||
-           option.spanish ||
-           option.english;
-  };
-
-  const handleOptionSelect = (option: ChatOption) => {
-    setInput(getPrimaryText(option));
-    setShowOptions(false);
-  };
-
+  // Handle sending messages
   const handleSend = async () => {
-    if (isTransitioning || !input.trim()) return;
+    if (!input.trim() || isTransitioning || !character) {
+      return;
+    }
+
     setError(null);
 
     try {
-      const selectedOption = currentSceneData?.options.find(opt => 
-        getPrimaryText(opt) === input.trim()
-      );
+      // Find matching option from current scene
+      const selectedOption = currentSceneData?.options.find(opt => {
+        const primaryText = opt.chinese || opt.japanese || opt.korean || opt.spanish || opt.english;
+        return primaryText === input.trim();
+      });
 
       if (!selectedOption) {
         setError('Please select a valid response option');
@@ -77,19 +53,31 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
       });
 
       setInput('');
+      setShowOptions(false);
 
-      // Wait for animation
+      // Add response after a short delay
       await new Promise(resolve => setTimeout(resolve, 500));
 
-      // Add assistant response if available
       if (selectedOption.response) {
         actions.addMessage({
           role: 'assistant',
           content: selectedOption.response
         });
 
+        // Handle video if present
         if (selectedOption.response.video) {
           setCurrentVideo(selectedOption.response.video);
+        }
+
+        // Play audio for the response
+        const primaryResponseText = selectedOption.response.chinese || 
+                                  selectedOption.response.japanese || 
+                                  selectedOption.response.korean || 
+                                  selectedOption.response.spanish || 
+                                  selectedOption.response.english;
+        
+        if (primaryResponseText) {
+          await handlePlayAudio(primaryResponseText);
         }
       }
 
@@ -100,7 +88,12 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
 
       // Handle scene transition
       if (currentScene >= 5) {
-        setShowCompletionPopup(true);
+        // Handle chat completion
+        setIsTransitioning(true);
+        setTimeout(() => {
+          // Navigate or show completion dialog
+          router.push(`/chat/${character.language}`);
+        }, 1000);
       } else {
         setIsTransitioning(true);
         setTimeout(() => {
@@ -109,61 +102,114 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
           setShowOptions(true);
         }, 1000);
       }
+
     } catch (error) {
-      console.error('Failed to process response:', error);
-      setError('Failed to process response');
+      console.error('Error processing message:', error);
+      setError('Failed to process message');
     }
+  };
+
+  // Audio playback functionality
+  const handlePlayAudio = async (text: string) => {
+    if (audioPlaying) return;
+
+    try {
+      setAudioPlaying(true);
+      const response = await fetch('/api/tts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          text,
+          language: character?.language || 'chinese'
+        }),
+      });
+
+      if (!response.ok) throw new Error('TTS failed');
+      
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      
+      audio.onended = () => {
+        setAudioPlaying(false);
+        URL.revokeObjectURL(audioUrl);
+      };
+
+      await audio.play();
+    } catch (error) {
+      console.error('Audio playback error:', error);
+      setAudioPlaying(false);
+    }
+  };
+
+  // Scroll to bottom when messages change
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleOptionSelect = (option: ChatOption) => {
+    const primaryText = option.chinese || 
+                       option.japanese || 
+                       option.korean || 
+                       option.spanish || 
+                       option.english;
+    setInput(primaryText);
+    setShowOptions(false);
   };
 
   return (
     <div className="flex flex-col h-screen bg-[#1a1b1e]">
-      <ChatHeader
-  characterName={character?.name || ''}
-  characterId={characterId}
-  happiness={happiness[characterId] || 50}
-/>
-
-      <div className="flex-1 relative">
-        {/* Video Container */}
-        {currentVideo && (
-          <div className="sticky top-0 z-10 w-full bg-black/50">
-            <div className="max-w-lg mx-auto p-2">
+      {/* Fixed Header */}
+      <div className="fixed top-0 left-0 right-0 z-30 bg-[#1a1b1e]">
+        <ChatHeader
+          characterName={character?.name || ''}
+          characterId={characterId}
+          happiness={happiness[characterId] || 50}
+        />
+      </div>
+  
+      {/* Scrollable Content Area */}
+      <div className="flex-1 overflow-y-auto">
+        {/* Initial spacing from header */}
+        <div className="pt-20">
+          {/* Video Section if present */}
+          {currentVideo && (
+            <div className="sticky top-16 z-20 bg-[#1a1b1e] mt-2.5 px-4">
               <VideoPlayer src={currentVideo} />
             </div>
+          )}
+  
+          {/* Messages with correct spacing */}
+          <div className={`px-4 ${currentVideo ? 'mt-2.5' : 'mt-2.5'}`}>
+            {messages.map((message, index) => (
+              <ChatMessageComponent
+                key={index}
+                message={message as ChatMessage}
+                avatarSrc={character?.image}
+                language={character?.language || 'chinese'}
+                onPlayAudio={handlePlayAudio}
+                audioPlaying={audioPlaying}
+              />
+            ))}
+            <div ref={messagesEndRef} />
           </div>
-        )}
-
-        {/* Messages Container */}
-        <div className="flex-1 overflow-y-auto px-4">
-          {messages.map((message, index) => (
-            <ChatMessageComponent
-              key={index}
-              message={message as ChatMessage}
-              avatarSrc={character?.image}
-              language={character?.language || 'chinese'}
-            />
-          ))}
-          <div ref={messagesEndRef} />
         </div>
       </div>
-
-      {/* Error Message */}
-      {error && (
-        <div className="bg-red-600/90 text-white text-center py-2 px-4">
-          {error}
-        </div>
-      )}
-
-      {/* Input Area */}
-      <div className="border-t border-gray-800 bg-[#1a1b1e]">
-        <div className="p-4 space-y-4">
+  
+      {/* Fixed Input Area */}
+      <div className="fixed bottom-0 left-0 right-0 bg-[#1a1b1e] border-t border-gray-800">
+        <div className="p-4">
           {showOptions && currentSceneData?.options && (
-            <ChatOptions
-              options={currentSceneData.options}
-              onSelectOption={handleOptionSelect}
-            />
+            <div className="mb-4">
+              <ChatOptions
+                options={currentSceneData.options}
+                onSelectOption={handleOptionSelect}
+                onPlayAudio={handlePlayAudio}
+                audioPlaying={audioPlaying}
+              />
+            </div>
           )}
-
+  
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowOptions(!showOptions)}
@@ -173,7 +219,7 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-
+  
             <input
               type="text"
               value={input}
@@ -181,7 +227,7 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
               placeholder="Type or select a message..."
               className="flex-1 bg-gray-800 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-
+  
             <button
               onClick={handleSend}
               disabled={!input.trim() || isTransitioning}
@@ -196,17 +242,7 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
           </div>
         </div>
       </div>
-
-      {/* Completion Popup */}
-      {showCompletionPopup && character && (
-        <ChatCompletionPopup
-          language={character.language}
-          onClose={() => {
-            setShowCompletionPopup(false);
-            router.push(`/chat/${character.language}`);
-          }}
-        />
-      )}
     </div>
   );
-}
+
+}//src/components/ChatInterface/index.tsx

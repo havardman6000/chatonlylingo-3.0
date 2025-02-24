@@ -1,11 +1,19 @@
+// src/components/ChatInterface/ChatOptions.tsx
 import { ChatOption } from '@/types/chat';
 
 interface ChatOptionsProps {
   options: ChatOption[];
   onSelectOption: (option: ChatOption) => void;
+  onPlayAudio: (text: string) => Promise<void>;
+  audioPlaying: boolean;
 }
 
-export function ChatOptions({ options, onSelectOption }: ChatOptionsProps) {
+export function ChatOptions({ 
+  options, 
+  onSelectOption, 
+  onPlayAudio, 
+  audioPlaying 
+}: ChatOptionsProps) {
   const getPrimaryText = (option: ChatOption) => {
     return option.chinese ||
            option.japanese ||
@@ -19,6 +27,13 @@ export function ChatOptions({ options, onSelectOption }: ChatOptionsProps) {
            option.romaji ||
            option.romanized ||
            '';
+  };
+
+  const handlePlayAudio = async (e: React.MouseEvent, text: string) => {
+    e.stopPropagation();
+    if (!audioPlaying) {
+      await onPlayAudio(text);
+    }
   };
 
   return (
@@ -53,31 +68,25 @@ export function ChatOptions({ options, onSelectOption }: ChatOptionsProps) {
               )}
             </div>
             
-            <div className="flex-shrink-0 ml-3">
-              <div
-                className="w-6 h-6 flex items-center justify-center rounded-full bg-blue-500 hover:bg-blue-600 transition-colors cursor-pointer"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  // Audio functionality handled by parent component
-                }}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.stopPropagation();
-                    // Audio functionality handled by parent component
-                  }
-                }}
+            <button
+              className={`flex-shrink-0 ml-3 w-8 h-8 rounded-full transition-colors flex items-center justify-center
+                ${audioPlaying ? 'bg-blue-700 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600'}`}
+              onClick={(e) => handlePlayAudio(e, getPrimaryText(option))}
+              disabled={audioPlaying}
+              aria-label={audioPlaying ? "Audio playing" : "Play audio"}
+            >
+              <svg 
+                className="w-4 h-4 text-white" 
+                viewBox="0 0 24 24" 
+                fill="currentColor"
               >
-                <svg 
-                  className="w-3 h-3 text-white" 
-                  viewBox="0 0 24 24" 
-                  fill="currentColor"
-                >
+                {audioPlaying ? (
+                  <path d="M10 15V9l5 3-5 3z"/>
+                ) : (
                   <path d="M8 5v14l11-7z"/>
-                </svg>
-              </div>
-            </div>
+                )}
+              </svg>
+            </button>
           </div>
         </div>
       ))}
