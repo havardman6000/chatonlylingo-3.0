@@ -161,7 +161,7 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
       {/* Scrollable Content Area */}
       <div className="flex-1 overflow-y-auto">
         {/* Initial spacing from header */}
-        <div className="pt-20">
+        <div className="pt-20 pb-32"> {/* Increased bottom padding to account for input area */}
           {/* Video Section if present */}
           {currentVideo && (
             <div className="sticky top-16 z-20 bg-[#1a1b1e] mt-2.5 px-4">
@@ -190,6 +190,19 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
       {/* Fixed Input Area */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#1a1b1e] border-t border-gray-800">
         <div className="p-4">
+          {/* Chat Options - Moved above the input */}
+          {showOptions && currentSceneData?.options && (
+            <div className="mb-4 bg-gray-800/50 rounded-lg p-2">
+              <ChatOptions
+                options={currentSceneData.options}
+                onSelectOption={handleOptionSelect}
+                onPlayAudio={handlePlayAudio}
+                audioPlaying={audioPlaying}
+              />
+            </div>
+          )}
+
+          {/* Input Area */}
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowOptions(!showOptions)}
@@ -220,18 +233,6 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
               Send
             </button>
           </div>
-
-          {/* Chat Options */}
-          {showOptions && currentSceneData?.options && (
-            <div className="chat-options-container mt-4">
-              <ChatOptions
-                options={currentSceneData.options}
-                onSelectOption={handleOptionSelect}
-                onPlayAudio={handlePlayAudio}
-                audioPlaying={audioPlaying}
-              />
-            </div>
-          )}
         </div>
       </div>
     </div>
