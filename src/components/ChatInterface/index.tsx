@@ -16,7 +16,6 @@ export default function ChatInterface({ characterId }: { characterId: CharacterI
   const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { selectedCharacter, messages, currentScene, happiness, actions } = useChatStore();
-  const [showOptions, setShowOptions] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showCompletionPopup, setShowCompletionPopup] = useState(false);
@@ -84,7 +83,6 @@ export default function ChatInterface({ characterId }: { characterId: CharacterI
         setTimeout(() => {
           actions.setScene(currentScene + 1);
           setIsTransitioning(false);
-          setShowOptions(true);
         }, 1000);
       }
     } catch (error) {
@@ -207,28 +205,31 @@ export default function ChatInterface({ characterId }: { characterId: CharacterI
           {error}
         </div>
       )}
-      <div className="p-4">
-        {showOptions && currentSceneData?.options && (
-          <ChatOptions
-            options={currentSceneData.options}
-            onSelectOption={handleOptionSelect}
-            onPlayAudio={onPlayAudio}
-            audioPlaying={audioPlaying}
-          />
+      <div className="p-4 flex flex-col items-center relative">
+        {currentSceneData?.options && (
+          <div className="w-full max-w-lg mb-4">
+            <ChatOptions
+              options={currentSceneData.options}
+              onSelectOption={handleOptionSelect}
+              onPlayAudio={onPlayAudio}
+              audioPlaying={audioPlaying}
+            />
+          </div>
         )}
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-2 w-full">
           <Input
             type="text"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
             placeholder="Type a message..."
-            className="flex-1"
+            className="flex-1 bg-gray-800 text-white rounded-lg px-4 py-3 focus:outline-none"
           />
           <Button
             onClick={handleSendMessage}
             disabled={isLoading}
-            className="bg-blue-500 text-white hover:bg-blue-600"
+            className="bg-blue-500 text-white hover:bg-blue-600 flex items-center"
           >
+            <img src="/path-to-second-image-logo.png" alt="Send" className="w-6 h-6 mr-2" />
             Send
           </Button>
         </div>
