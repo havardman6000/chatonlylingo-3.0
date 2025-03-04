@@ -1,18 +1,16 @@
 // src/components/ChatInterface/index.tsx
 import React, { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
 import { ChatMessageComponent } from './ChatMessage';
 import { ChatOptions } from './ChatOptions';
 import ChatHeader from './ChatHeader';
 import { VideoPlayer } from './VideoPlayer';
 import { useChatStore } from '@/store/chatStore';
 import { characters } from '@/data/characters';
-import type { CharacterId, ChatMessage, ChatOption, ChatInterfaceProps } from '@/types/chat';
+import type { ChatMessage, ChatOption, ChatInterfaceProps } from '@/types/chat';
 
 import { ChatCompletionPopup } from '../ChatCompletionPopup';
 
 export default function ChatInterface({ characterId, embedded = false }: ChatInterfaceProps) {
-  const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { messages, currentScene, happiness, actions } = useChatStore();
   const [input, setInput] = useState('');
@@ -20,7 +18,7 @@ export default function ChatInterface({ characterId, embedded = false }: ChatInt
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [audioPlaying, setAudioPlaying] = useState(false);
   const [currentVideo, setCurrentVideo] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showCompletionPopup, setShowCompletionPopup] = useState(false);
 
   const character = characters[characterId];
@@ -32,7 +30,7 @@ export default function ChatInterface({ characterId, embedded = false }: ChatInt
       return;
     }
 
-    setError(null);
+    setErrorMsg(null);
 
     try {
       const selectedOption = currentSceneData?.options.find(opt => {
@@ -41,7 +39,7 @@ export default function ChatInterface({ characterId, embedded = false }: ChatInt
       });
 
       if (!selectedOption) {
-        setError('Please select a valid response option');
+        setErrorMsg('Please select a valid response option');
         return;
       }
 
@@ -101,7 +99,7 @@ export default function ChatInterface({ characterId, embedded = false }: ChatInt
 
     } catch (error) {
       console.error('Error processing message:', error);
-      setError('Failed to process message');
+      setErrorMsg('Failed to process message');
     }
   };
 

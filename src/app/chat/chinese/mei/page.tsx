@@ -1,12 +1,10 @@
 'use client'
 
 import ChatInterface from '@/components/ChatInterface' // Changed to default import
-import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { useChatStore } from '@/store/chatStore'
 
 export default function MeiChatPage() {
-  const router = useRouter()
   const { selectedCharacter, actions } = useChatStore()
   const tutorId = 'mei'
   const [isInitializing, setIsInitializing] = useState(true)
