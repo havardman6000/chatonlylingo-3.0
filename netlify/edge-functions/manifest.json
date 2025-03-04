@@ -4,6 +4,10 @@
     {
       "function": "next",
       "pattern": "^/api/.*$"
+    },
+    {
+      "function": "next",
+      "pattern": "^/api/tts$"
     }
   ]
 } 

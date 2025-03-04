@@ -13,6 +13,13 @@ set -e
 # Check Node.js version
 echo "Using Node.js $(node -v)"
 
+# Create a simple runtime config to ensure Next.js has API routes
+cat > .env.production << EOL
+# Runtime environment
+OPENAI_API_KEY=${OPENAI_API_KEY}
+NEXT_PUBLIC_BASE_URL=${URL:-https://chatpagelingo.netlify.app}
+EOL
+
 # Install dependencies if needed
 if [ ! -d "node_modules" ] || [ ! -f "node_modules/.bin/next" ]; then
   echo "Installing dependencies..."
@@ -23,9 +30,15 @@ fi
 echo "Running Next.js build..."
 npx next build --no-lint
 
+# Ensure netlify directory exists for edge functions
+mkdir -p netlify/edge-functions
+
 # Verify build output exists
 if [ -d ".next" ]; then
   echo "Build completed successfully! Output directory .next exists."
+  # List some of the files to verify
+  echo "Build output files:"
+  ls -la .next
 else
   echo "ERROR: Build failed - .next directory does not exist."
   exit 1
