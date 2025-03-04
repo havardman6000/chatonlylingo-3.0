@@ -50,7 +50,9 @@ export interface ChatHeaderProps {
   happiness: number;
   language: SupportedLanguage;
   onBack?: () => void;
+  embedded?: boolean;
 }
+
 
 export interface ChatMessageProps {
   message: ChatMessage;
@@ -65,6 +67,10 @@ export interface ChatOptionsProps {
   onSelectOption: (option: ChatOption) => void;
   onPlayAudio: (text: string) => Promise<void>; // Add onPlayAudio
   audioPlaying: boolean; // Add audioPlaying
+}
+export interface ChatInterfaceProps {
+  characterId: CharacterId;
+  embedded?: boolean;
 }
 
 export interface Scene {

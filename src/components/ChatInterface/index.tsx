@@ -7,14 +7,11 @@ import ChatHeader from './ChatHeader';
 import { VideoPlayer } from './VideoPlayer';
 import { useChatStore } from '@/store/chatStore';
 import { characters } from '@/data/characters';
-import type { CharacterId, ChatMessage, ChatOption } from '@/types/chat';
+import type { CharacterId, ChatMessage, ChatOption, ChatInterfaceProps } from '@/types/chat';
 
 import { ChatCompletionPopup } from '../ChatCompletionPopup';
-interface ChatInterfaceProps {
-  characterId: CharacterId;
-}
 
-export default function ChatInterface({ characterId }: ChatInterfaceProps) {
+export default function ChatInterface({ characterId, embedded = false }: ChatInterfaceProps) {
   const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { selectedCharacter, messages, currentScene, happiness, actions } = useChatStore();
@@ -85,11 +82,15 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
       if (currentScene >= 5) {
         setIsTransitioning(true);
         setShowCompletionPopup(true);
-      
-        // Remove this section that automatically navigates:
-        /*setTimeout(() => {
-          router.push(`/chat/${character.language}`);
-        }, 1000);*/
+        
+        // Notify parent window if embedded
+        if (embedded && window.self !== window.top) {
+          window.parent.postMessage({
+            type: 'lingobabe-chat-completed',
+            tutorId: characterId,
+            language: character.language
+          }, '*');
+        }
       } else {
         setIsTransitioning(true);
         setTimeout(() => {
@@ -107,9 +108,13 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
   // Audio playback functionality
   const handlePlayAudio = async (text: string) => {
     if (audioPlaying) return;
-
+  
     try {
       setAudioPlaying(true);
+      
+      // Log for debugging
+      console.log(`Attempting to play audio for: ${text.substring(0, 30)}...`);
+      
       const response = await fetch('/api/tts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -118,22 +123,41 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
           language: character?.language || 'chinese'
         }),
       });
-
-      if (!response.ok) throw new Error('TTS failed');
-
+  
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('TTS API error:', errorData);
+        throw new Error(`TTS failed: ${response.status} ${response.statusText}`);
+      }
+  
       const audioBlob = await response.blob();
       const audioUrl = URL.createObjectURL(audioBlob);
       const audio = new Audio(audioUrl);
-
+  
       audio.onended = () => {
         setAudioPlaying(false);
         URL.revokeObjectURL(audioUrl);
       };
-
+  
+      // Add error handler for audio element
+      audio.onerror = (e) => {
+        console.error('Audio playback error:', e);
+        setAudioPlaying(false);
+        URL.revokeObjectURL(audioUrl);
+      };
+  
       await audio.play();
     } catch (error) {
       console.error('Audio playback error:', error);
       setAudioPlaying(false);
+      
+      // Notify parent if embedded
+      if (embedded && window.self !== window.top) {
+        window.parent.postMessage({
+          type: 'lingobabe-audio-error',
+          error: (error as Error).message
+        }, '*');
+      }
     }
   };
 
@@ -141,6 +165,19 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+  
+  // Send message notification to parent if embedded
+  useEffect(() => {
+    if (embedded && window.self !== window.top && messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+      window.parent.postMessage({
+        type: 'lingobabe-message-sent',
+        message: lastMessage,
+        tutorId: characterId,
+        language: character?.language || 'chinese'
+      }, '*');
+    }
+  }, [messages, embedded, characterId, character?.language]);
 
   const handleOptionSelect = (option: ChatOption) => {
     const primaryText = option.chinese ||
@@ -152,24 +189,40 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
     setShowOptions(false);
   };
 
+  const handleBackButton = () => {
+    if (embedded) {
+      // Notify parent about back button click
+      if (window.self !== window.top) {
+        window.parent.postMessage({
+          type: 'lingobabe-back-clicked',
+          tutorId: characterId
+        }, '*');
+      }
+    } else {
+      router.push(`/chat/${character?.language}`);
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen bg-[#1a1b1e]">
-      {/* Fixed Header */}
-      <div className="fixed top-0 left-0 right-0 z-30 bg-[#1a1b1e]">
-        <ChatHeader
-          characterName={character?.name || ''}
-          characterId={characterId}
-          happiness={happiness[characterId] || 50}
-        />
-      </div>
+      {/* Fixed Header - Hide in embedded mode if specified */}
+      {!embedded && (
+        <div className="fixed top-0 left-0 right-0 z-30 bg-[#1a1b1e]">
+          <ChatHeader
+            characterName={character?.name || ''}
+            characterId={characterId}
+            happiness={happiness[characterId] || 50}
+          />
+        </div>
+      )}
 
       {/* Scrollable Content Area */}
       <div className="flex-1 overflow-y-auto">
-        {/* Initial spacing from header */}
-        <div className="pt-20 pb-32"> {/* Increased bottom padding to account for input area */}
+        {/* Initial spacing from header - adjust based on embedded mode */}
+        <div className={`${embedded ? 'pt-4' : 'pt-20'} pb-32`}>
           {/* Video Section if present */}
           {currentVideo && (
-            <div className="sticky top-16 z-20 bg-[#1a1b1e] mt-2.5 px-4">
+            <div className={`sticky ${embedded ? 'top-4' : 'top-16'} z-20 bg-[#1a1b1e] mt-2.5 px-4`}>
               <VideoPlayer src={currentVideo} />
             </div>
           )}
@@ -240,13 +293,16 @@ export default function ChatInterface({ characterId }: ChatInterfaceProps) {
           </div>
         </div>
       </div>
-      <ChatCompletionPopup
-      isOpen={showCompletionPopup}
-      onClose={() => setShowCompletionPopup(false)}
-      language={character?.language || 'chinese'}
-      tutorName={character?.name || ''}
-    />
+      
+      {/* Only show completion popup when not embedded */}
+      {!embedded && (
+        <ChatCompletionPopup
+          isOpen={showCompletionPopup}
+          onClose={() => setShowCompletionPopup(false)}
+          language={character?.language || 'chinese'}
+          tutorName={character?.name || ''}
+        />
+      )}
     </div>
   );
 }
-//src/components/ChatInterface/index.tsx
