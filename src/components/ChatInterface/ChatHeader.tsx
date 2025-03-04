@@ -22,28 +22,9 @@ export default function ChatHeader({
 
   return (
     <div className="bg-gray-900 border-b border-gray-800">
-      <div className="px-4 py-3 flex items-center">
-        <button
-          onClick={() => router.push('/')}
-          className="p-2 text-gray-400 hover:text-white rounded-full transition-colors"
-          aria-label="Go back to home"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-6 w-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-        </button>
-
+      <div className="px-4 py-3 flex items-center justify-center">
+        {/* Back button removed as requested */}
+        
         <div className="flex-1 text-center">
           <h1 className="text-xl font-semibold text-white">
             {characterName}
