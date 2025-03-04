@@ -113,7 +113,13 @@ export default function ChatInterface({ characterId, embedded = false }: ChatInt
       // Log for debugging
       console.log(`Attempting to play audio for: ${text.substring(0, 30)}...`);
       
-      const response = await fetch('/api/tts', {
+      // Get the base URL - use window.location to ensure we're using the correct domain
+      const baseUrl = window.location.origin;
+      const apiUrl = `${baseUrl}/api/tts`;
+      
+      console.log(`Calling TTS API at: ${apiUrl}`);
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -125,6 +131,7 @@ export default function ChatInterface({ characterId, embedded = false }: ChatInt
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
         console.error('TTS API error:', errorData);
+        console.error(`TTS API failed with status: ${response.status} ${response.statusText}`);
         throw new Error(`TTS failed: ${response.status} ${response.statusText}`);
       }
   
@@ -148,6 +155,9 @@ export default function ChatInterface({ characterId, embedded = false }: ChatInt
     } catch (error) {
       console.error('Audio playback error:', error);
       setAudioPlaying(false);
+      
+      // Show a helpful error message to the user
+      setErrorMsg(`Could not play audio. Please check your connection or try again later.`);
       
       // Notify parent if embedded
       if (embedded && window.self !== window.top) {

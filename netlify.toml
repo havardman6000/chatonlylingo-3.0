@@ -5,12 +5,19 @@
 [build.environment]
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
   DISABLE_ESLINT_PLUGIN = "true"
+  NODE_VERSION = "18.17.0"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
 
-# Redirect all API routes
+# Function settings for Next.js API routes
+[functions]
+  external_node_modules = ["@tensorflow/tfjs-node"]
+  included_files = ["node_modules/@tensorflow/tfjs-node/lib/napi-v8/tfjs_binding.node"]
+  node_bundler = "esbuild"
+
+# Keep original path for Next.js API routes
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
+  to = "/api/:splat"
   status = 200
