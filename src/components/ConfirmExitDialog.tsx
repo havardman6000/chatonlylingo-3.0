@@ -23,8 +23,8 @@ export function ConfirmExitDialog({
           <DialogTitle id="dialog-title">Leave Chat?</DialogTitle>
         </DialogHeader>
         <div className="text-gray-300 my-4" id="dialog-description">
-          <p>If you leave now, your progress will be lost and you'll lose access to this chat.</p>
-          <p className="mt-2">You'll need to pay 10 LBAI tokens again to restart this conversation.</p>
+          <p>If you leave now, your progress will be lost and you&apos;ll lose access to this chat.</p>
+          <p className="mt-2">You&apos;ll need to pay 10 LBAI tokens again to restart this conversation.</p>
         </div>
         <DialogFooter className="flex flex-col sm:flex-row sm:justify-between gap-4">
           <Button

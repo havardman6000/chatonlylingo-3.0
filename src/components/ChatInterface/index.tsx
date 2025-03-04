@@ -14,7 +14,7 @@ import { ChatCompletionPopup } from '../ChatCompletionPopup';
 export default function ChatInterface({ characterId, embedded = false }: ChatInterfaceProps) {
   const router = useRouter();
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const { selectedCharacter, messages, currentScene, happiness, actions } = useChatStore();
+  const { messages, currentScene, happiness, actions } = useChatStore();
   const [input, setInput] = useState('');
   const [showOptions, setShowOptions] = useState(false); // Options are not expanded by default
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -189,20 +189,6 @@ export default function ChatInterface({ characterId, embedded = false }: ChatInt
     setShowOptions(false);
   };
 
-  const handleBackButton = () => {
-    if (embedded) {
-      // Notify parent about back button click
-      if (window.self !== window.top) {
-        window.parent.postMessage({
-          type: 'lingobabe-back-clicked',
-          tutorId: characterId
-        }, '*');
-      }
-    } else {
-      router.push(`/chat/${character?.language}`);
-    }
-  };
-
   return (
     <div className="flex flex-col h-screen bg-[#1a1b1e]">
       {/* Fixed Header - Hide in embedded mode if specified */}
@@ -210,7 +196,6 @@ export default function ChatInterface({ characterId, embedded = false }: ChatInt
         <div className="fixed top-0 left-0 right-0 z-30 bg-[#1a1b1e]">
           <ChatHeader
             characterName={character?.name || ''}
-            characterId={characterId}
             happiness={happiness[characterId] || 50}
           />
         </div>

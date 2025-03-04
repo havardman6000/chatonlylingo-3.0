@@ -3,13 +3,11 @@ import { useRouter } from 'next/navigation';
 
 interface ChatHeaderProps {
   characterName: string;
-  characterId: string;
   happiness: number;
 }
 
 export default function ChatHeader({
   characterName,
-  characterId,
   happiness
 }: ChatHeaderProps) {
   const router = useRouter();

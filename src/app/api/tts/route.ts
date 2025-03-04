@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
-    const { text, language } = await req.json();
+    const { text } = await req.json();
 
     if (!text) {
       return NextResponse.json(

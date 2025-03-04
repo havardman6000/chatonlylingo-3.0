@@ -1,4 +1,4 @@
-import { Characters, Character, CharacterId } from '@/types/chat';
+import { Character, CharacterId } from '@/types/chat';
 export const characters: Record<string, Character> = {
   mei: {  
     "id": "mei",
@@ -431,7 +431,7 @@ aoi: {
       "initial": {
         "japanese": "まずは飲み物を選びましょうか？ 普段は赤ワイン、白ワイン、それとも何か特別なものがお好き？",
         "romaji": "Mazu wa nomimono o erabimashou ka? Fudan wa aka wain, shiro wain, soretomo nanika tokubetsu na mono ga osuki?",
-        "english": "Let’s start with a drink. Do you usually go for red, white, or something a little more exciting?",
+        "english": "Let's start with a drink. Do you usually go for red, white, or something a little more exciting?",
         "context": "Flicks her eyes toward the wine list, then back at you.",
         "video": "https://i.imgur.com/UTwg1Bo.mp4"
       },
@@ -440,7 +440,7 @@ aoi: {
           "id": "JP201",
           "japanese": "赤ワインですね。ヴィンテージワインには、力強くて時代を超えた魅力があります。",
           "romaji": "Aka wain desu ne. Vinteiji wain ni wa, chikara-zuyokute jidai o koeta miryoku ga arimasu.",
-          "english": "Red, always. There’s something bold and timeless about a great vintage.",
+          "english": "Red, always. There's something bold and timeless about a great vintage.",
           "points": 12,
           "video": "https://i.imgur.com/UTwg1Bo.mp4",
           "response": {
@@ -470,7 +470,7 @@ aoi: {
           "id": "JP203",
           "japanese": "いろいろ試すのが好きです。ソムリエのおすすめを聞いてみましょう。",
           "romaji": "Iroiro tamesu no ga suki desu. Somurie no osusume o kiite mimashou.",
-          "english": "I like to mix it up. Let’s see what the sommelier recommends.",
+          "english": "I like to mix it up. Let's see what the sommelier recommends.",
           "points": 11,
           "video": "https://i.imgur.com/JjB5L3O.mp4",
           "response": {
@@ -497,13 +497,13 @@ aoi: {
           "id": "JP301",
           "japanese": "いつもシェフのおすすめを選ぶよ。絶対に間違いないからね。",
           "romaji": "Itsumo shefu no osusume o erabu yo. Zettai ni machigai nai kara ne.",
-          "english": "I always go for the chef’s special—it never disappoints.",
+          "english": "I always go for the chef's special—it never disappoints.",
           "points": 12,
           "video": "https://i.imgur.com/ERK5vCj.mp4",
           "response": {
             "japanese": "シェフを信頼するタイプなのね。いいわ、そのワクワク感、私も好きよ。",
             "romaji": "Shefu o shinrai suru taipu na no ne. Ii wa, sono wakuwaku kan, watashi mo suki yo.",
-            "english": "A man who trusts the chef—I like that. There’s something exciting about not knowing exactly what you’re getting.",
+            "english": "A man who trusts the chef—I like that. There's something exciting about not knowing exactly what you're getting.",
             "context": "Raises an intrigued eyebrow.",
             "video": "https://i.imgur.com/f3leqLR.mp4"
           }
@@ -527,13 +527,13 @@ aoi: {
           "id": "JP303",
           "japanese": "君に任せるよ。驚かせてくれる？",
           "romaji": "Kimi ni makaseru yo. Odorokasete kureru?",
-          "english": "I’ll let you decide—surprise me.",
+          "english": "I'll let you decide—surprise me.",
           "points": 10,
           "video": "https://i.imgur.com/g7mJQUo.mp4",
           "response": {
             "japanese": "私に選ばせるの？面白いわね。",
             "romaji": "Watashi ni erabaseru no? Omoshiroi wa ne.",
-            "english": "A man who trusts a woman’s choice? That’s refreshing.",
+            "english": "A man who trusts a woman's choice? That's refreshing.",
             "context": "Tilts her head, intrigued.",
             "video": "https://i.imgur.com/ey0dZb1.mp4"
           }
@@ -545,7 +545,7 @@ aoi: {
       "initial": {
         "japanese": "さて、注文も済んだことだし、少し深い話をしましょうか？ 見た目だけじゃわからない、意外な一面があるんじゃない？",
         "romaji": "Sate, chūmon mo sunda koto dashi, sukoshi fukai hanashi o shimashou ka? Mitame dake ja wakaranai, igai na ichimen ga aru n janai?",
-        "english": "Now tell me—what’s something about you I wouldn’t guess just by looking at you?",
+        "english": "Now tell me—what's something about you I wouldn't guess just by looking at you?",
         "context": "Resting her chin on her hand, she studies you with amused curiosity.",
         "video": "https://i.imgur.com/HrwmQmG.mp4"
       },
@@ -575,7 +575,7 @@ aoi: {
           "response": {
             "japanese": "一人旅？すごいわね。最も忘れられない瞬間は何だった？",
             "romaji": "Hitoritabi? Sugoi wa ne. Mottomo wasurerarenai shunkan wa nan datta?",
-            "english": "A solo traveler? That’s impressive. What was the most unforgettable part?",
+            "english": "A solo traveler? That's impressive. What was the most unforgettable part?",
             "context": "Eyes light up with curiosity.",
             "video": "https://i.imgur.com/QHYB2Xc.mp4"
           }
@@ -584,13 +584,13 @@ aoi: {
           "id": "JP403",
           "japanese": "人を笑わせるのが得意なんだ。試してみようか？",
           "romaji": "Hito o warawaseru no ga tokui nan da. Tameshite miyou ka?",
-          "english": "I have a talent for making people laugh. I’ll prove it if you want.",
+          "english": "I have a talent for making people laugh. I'll prove it if you want.",
           "points": 10,
           "video": "https://i.imgur.com/sdRQtci.mp4",
           "response": {
             "japanese": "お、コメディアンなの？いいわね。じゃあ、一番面白いネタを披露してくれる？",
             "romaji": "O, komedian na no? Ii wa ne. Jā, ichiban omoshiroi neta o hirō shite kureru?",
-            "english": "A comedian, huh? Alright, impress me—what’s your best line?",
+            "english": "A comedian, huh? Alright, impress me—what's your best line?",
             "context": "Smirks, tilting her head slightly.",
             "video": "https://i.imgur.com/i858GNc.mp4"
           }
@@ -602,7 +602,7 @@ aoi: {
       "initial": {
         "japanese": "さて、今夜はここで終わりにしますか？ それとも、まだ続きがある？",
         "romaji": "Sate, kon'ya wa koko de owari ni shimasu ka? Soretomo, mada tsuzuki ga aru?",
-        "english": "So, what’s next? Are you the type to let a great night end here… or do you have something in mind?",
+        "english": "So, what's next? Are you the type to let a great night end here… or do you have something in mind?",
         "context": "Her voice lowers slightly, warm and inviting.",
         "video": "https://i.imgur.com/Kh9EdUK.mp4"
       },
@@ -611,13 +611,13 @@ aoi: {
           "id": "JP501",
           "japanese": "この夜をもっと楽しみたい。お気に入りの場所でもう一杯どう？",
           "romaji": "Kono yoru o motto tanoshimitai. Oki ni iri no basho de mō ippai dō?",
-          "english": "I’d love to continue this night over a nightcap at my favorite place.",
+          "english": "I'd love to continue this night over a nightcap at my favorite place.",
           "points": 15,
           "video": "https://i.imgur.com/Kh9EdUK.mp4",
           "response": {
             "japanese": "大胆な提案ね。いいわ…そのお気に入りの場所ってどこ？",
             "romaji": "Daitan na teian ne. Ii wa… sono oki ni iri no basho tte doko?",
-            "english": "A bold proposal. Alright… where’s this mysterious favorite place of yours?",
+            "english": "A bold proposal. Alright… where's this mysterious favorite place of yours?",
             "context": "Raises an intrigued eyebrow, smirking slightly.",
             "video": "https://i.imgur.com/hxjyvbQ.mp4"
           }
@@ -626,7 +626,7 @@ aoi: {
           "id": "JP502",
           "japanese": "別の日にまた会うのはどう？ ぜひまた会いたいな。",
           "romaji": "Betsu no hi ni mata au no wa dō? Zehi mata aitai na.",
-          "english": "Let’s plan something for another evening. I’d love to see you again.",
+          "english": "Let's plan something for another evening. I'd love to see you again.",
           "points": 12,
           "video": "https://i.imgur.com/zhJziX5.mp4",
           "response": {
@@ -641,13 +641,13 @@ aoi: {
           "id": "JP503",
           "japanese": "楽しい時間だったね。またどこかで会えるかもね。",
           "romaji": "Tanoshii jikan datta ne. Mata doko ka de aeru kamo ne.",
-          "english": "This was great. Maybe we’ll cross paths again sometime.",
+          "english": "This was great. Maybe we'll cross paths again sometime.",
           "points": 8,
           "video": "https://i.imgur.com/ZxNeKqo.mp4",
           "response": {
             "japanese": "あまりに確信なさそうね。",
             "romaji": "Amari ni kakushin nasa-sō ne.",
-            "english": "Maybe? That’s not very convincing.",
+            "english": "Maybe? That's not very convincing.",
             "context": "Sips the last of her wine, observing you with mild amusement.",
             "video": "https://i.imgur.com/jLyu3hT.mp4"
           }
@@ -768,7 +768,7 @@ ji: {
       "initial": {
         "korean": "우리 먼저 와인부터 고를까요? 보통 레드 와인, 화이트 와인, 아니면 좀 더 특별한 걸 좋아하세요?",
         "romanized": "Uri meonjeo wainbuteo goreulkkayo? Botong redeu wain, hwaiteu wain, animyeon jom deo teukbyeolhan geol joahaseyo?",
-        "english": "Let’s start with a drink. Do you usually go for red, white, or something a little more exciting?",
+        "english": "Let's start with a drink. Do you usually go for red, white, or something a little more exciting?",
         "context": "Flicks her eyes toward the wine list, then back at you.",
         "video": "https://i.imgur.com/mjbLdXv.mp4"
       },
@@ -777,7 +777,7 @@ ji: {
           "id": "KR201",
           "korean": "레드 와인이죠, 당연히. 빈티지 와인은 언제나 클래식하고 강렬한 매력이 있어요.",
           "romanized": "Redeu wainijyo, dangyeonhi. Bintiji wain-eun eonjena keullaesikhago gangnyeolhan maeryeok-i isseoyo.",
-          "english": "Red, always. There’s something bold and timeless about a great vintage.",
+          "english": "Red, always. There's something bold and timeless about a great vintage.",
           "points": 12,
           "video": "https://i.imgur.com/mjbLdXv.mp4",
           "response": {
@@ -807,7 +807,7 @@ ji: {
           "id": "KR203",
           "korean": "저는 새로운 걸 시도하는 걸 좋아해요. 소믈리에 추천을 들어볼까요?",
           "romanized": "Jeoneun saeroun geol sidohaneun geol joahaeyo. Someullie chucheoneul deureobolkayo?",
-          "english": "I like to mix it up. Let’s see what the sommelier recommends.",
+          "english": "I like to mix it up. Let's see what the sommelier recommends.",
           "points": 11,
           "video": "https://i.imgur.com/6yEMbMh.mp4",
           "response": {
@@ -834,13 +834,13 @@ ji: {
           "id": "KR301",
           "korean": "나는 항상 셰프 추천 요리를 선택해. 실망한 적이 없거든.",
           "romanized": "Naneun hangsang syepeu chuchun yorireul seontaekhae. Silmanghan jeogi eopgeodeun.",
-          "english": "I always go for the chef’s special—it never disappoints.",
+          "english": "I always go for the chef's special—it never disappoints.",
           "points": 12,
           "video": "https://i.imgur.com/UJ6sb4Y.mp4",
           "response": {
             "korean": "셰프를 믿는 사람이네. 좋아. 뭘 받을지 모르는 그 설렘, 나도 좋아해.",
             "romanized": "Syepeureul mitneun saramine. Joa. Mwol badeulji moreuneun geu seollem, nado joahaeyo.",
-            "english": "A man who trusts the chef—I like that. There’s something exciting about not knowing exactly what you’re getting.",
+            "english": "A man who trusts the chef—I like that. There's something exciting about not knowing exactly what you're getting.",
             "context": "Raises an intrigued eyebrow.",
             "video": "https://i.imgur.com/fCuhLSL.mp4"
           }
@@ -864,13 +864,13 @@ ji: {
           "id": "KR303",
           "korean": "네가 골라줘. 나를 놀라게 해봐.",
           "romanized": "Nega gollajwo. Nareul nollage haebwa.",
-          "english": "I’ll let you decide—surprise me.",
+          "english": "I'll let you decide—surprise me.",
           "points": 10,
           "video": "https://i.imgur.com/Yeq70D1.mp4",
           "response": {
             "korean": "내가 선택해도 괜찮겠어? 재미있네, 좋아.",
             "romanized": "Naega seontaekhaedo gwaenchanhkesseo? Jaemiissne, joa.",
-            "english": "A man who trusts a woman’s choice? That’s refreshing.",
+            "english": "A man who trusts a woman's choice? That's refreshing.",
             "context": "Tilts her head, intrigued.",
             "video": "https://i.imgur.com/ey0dZb1.mp4"
           }
@@ -882,7 +882,7 @@ ji: {
       "initial": {
         "korean": "이제 주문도 끝났고, 나랑 좀 더 깊은 얘기를 해볼까? 겉모습만 보고는 절대 알 수 없는 네 이야기, 하나만 들려줘.",
         "romanized": "Ije jumundo kkeutnassgo, narang jom deo gipeun yaegireul haebolkka? Geotmoseubman bogo neun jeoldae al su eomneun ne iyagi, hanaman deullyeojwo.",
-        "english": "Now tell me—what’s something about you I wouldn’t guess just by looking at you?",
+        "english": "Now tell me—what's something about you I wouldn't guess just by looking at you?",
         "context": "Resting her chin on her hand, she studies you with amused curiosity.",
         "video": "https://i.imgur.com/HrwmQmG.mp4"
       },
@@ -912,7 +912,7 @@ ji: {
           "response": {
             "korean": "혼자 여행이라니! 멋지네요! 가장 기억에 남는 순간은 언제였어요?",
             "romanized": "Honja yeohaengirani! Meotjineyo! Gajang gieoge namneun sungan-eun eonjeyeosseoyo?",
-            "english": "A solo traveler? That’s impressive. What was the most unforgettable part?",
+            "english": "A solo traveler? That's impressive. What was the most unforgettable part?",
             "context": "Eyes light up with curiosity.",
             "video": "https://i.imgur.com/QHYB2Xc.mp4"
           }
@@ -921,13 +921,13 @@ ji: {
           "id": "KR403",
           "korean": "사람들을 웃기는 재주가 있어요. 원한다면 지금 증명해 볼까요?",
           "romanized": "Saramdeureul utgineun jaejuga isseoyo. Wonhandamyeon jigeum jeungmyeonghae bolkkayo?",
-          "english": "I have a talent for making people laugh. I’ll prove it if you want.",
+          "english": "I have a talent for making people laugh. I'll prove it if you want.",
           "points": 10,
           "video": "https://i.imgur.com/KAHAzpJ.mp4",
           "response": {
             "korean": "오~ 기대되는데요? 한번 보여줄래요?",
             "romanized": "O~ gidaedoeneyo? Hanbeon boyeojullae-yo?",
-            "english": "A comedian, huh? Alright, impress me—what’s your best line?",
+            "english": "A comedian, huh? Alright, impress me—what's your best line?",
             "context": "Smirks, tilting her head slightly.",
             "video": "https://i.imgur.com/i858GNc.mp4"
           }
@@ -939,7 +939,7 @@ ji: {
       "initial": {
         "korean": "자, 이제 어떻게 할 건가요? 그냥 이렇게 끝낼 건가요… 아니면 좀 더 특별한 계획이 있나요?",
         "romanized": "Ja, ije eotteoke hal geongayo? Geunyang ireoke kkeutnal geongayo… animyeon jom deo teukbyeolhan gyehoegi innayo?",
-        "english": "So, what’s next? Are you the type to let a great night end here… or do you have something in mind?",
+        "english": "So, what's next? Are you the type to let a great night end here… or do you have something in mind?",
         "context": "Her voice lowers slightly, warm and inviting.",
         "video": "https://i.imgur.com/Kh9EdUK.mp4"
       },
@@ -948,13 +948,13 @@ ji: {
           "id": "KR501",
           "korean": "이 밤을 더 즐기고 싶어요. 제가 아끼는 곳에서 한 잔 더 어때요?",
           "romanized": "I bam-eul deo jeulgigo sip-eoyo. Jega akkineun gos-eseo han jan deo eottaeyo?",
-          "english": "I’d love to continue this night over a nightcap at my favorite place.",
+          "english": "I'd love to continue this night over a nightcap at my favorite place.",
           "points": 15,
           "video": "https://i.imgur.com/Kh9EdUK.mp4",
           "response": {
             "korean": "과감한 제안이네요. 좋아요… 그 비밀스러운 장소가 어디죠?",
             "romanized": "Gwagamhan jean-ine-yo. Joayo… geu bimilsleunhan jangso-ga eodijyo?",
-            "english": "A bold proposal. Alright… where’s this mysterious favorite place of yours?",
+            "english": "A bold proposal. Alright… where's this mysterious favorite place of yours?",
             "context": "Raises an intrigued eyebrow, smirking slightly.",
             "video": "https://i.imgur.com/hxjyvbQ.mp4"
           }
@@ -963,7 +963,7 @@ ji: {
           "id": "KR502",
           "korean": "다른 날 다시 만나는 건 어때요? 꼭 다시 보고 싶어요.",
           "romanized": "Daleun nal dasi mannaneun geon eottaeyo? Kkog dasi bogo sip-eoyo.",
-          "english": "Let’s plan something for another evening. I’d love to see you again.",
+          "english": "Let's plan something for another evening. I'd love to see you again.",
           "points": 12,
           "video": "https://i.imgur.com/zhJziX5.mp4",
           "response": {
@@ -978,13 +978,13 @@ ji: {
           "id": "KR503",
           "korean": "정말 즐거웠어요. 언젠가 다시 마주칠 수도 있겠죠.",
           "romanized": "Jeongmal jeulgeowoss-eoyo. Eonjenga dasi majuchil sudo itketjyo.",
-          "english": "This was great. Maybe we’ll cross paths again sometime.",
+          "english": "This was great. Maybe we'll cross paths again sometime.",
           "points": 8,
           "video": "https://i.imgur.com/ZxNeKqo.mp4",
           "response": {
             "korean": "아마도? 그건 별로 설득력이 없네요.",
             "romanized": "Amado? Geugeon byeollo seoldeungryeog-i eomne-yo.",
-            "english": "Maybe? That’s not very convincing.",
+            "english": "Maybe? That's not very convincing.",
             "context": "Sips the last of her wine, observing you with mild amusement.",
             "video": "https://i.imgur.com/jLyu3hT.mp4"
           }
@@ -1097,7 +1097,7 @@ isabella: {
     "2": {
       "initial": {
         "spanish": "Empecemos con una bebida. ¿Sueles preferir vino tinto, blanco o algo un poco más emocionante?",
-        "english": "Let’s start with a drink. Do you usually go for red, white, or something a little more exciting?",
+        "english": "Let's start with a drink. Do you usually go for red, white, or something a little more exciting?",
         "context": "Flicks her eyes toward the wine list, then back at you.",
         "video": "https://placeholder.com/video"
       },
@@ -1105,7 +1105,7 @@ isabella: {
         {
           "id": "SP201",
           "spanish": "Vino tinto, siempre. Hay algo audaz y atemporal en una gran cosecha.",
-          "english": "Red, always. There’s something bold and timeless about a great vintage.",
+          "english": "Red, always. There's something bold and timeless about a great vintage.",
           "points": 12,
           "video": "https://i.imgur.com/TBHSIsp.mp4",
           "response": {
@@ -1131,7 +1131,7 @@ isabella: {
         {
           "id": "SP203",
           "spanish": "Me gusta variar. Veamos qué recomienda el sommelier.",
-          "english": "I like to mix it up. Let’s see what the sommelier recommends.",
+          "english": "I like to mix it up. Let's see what the sommelier recommends.",
           "points": 11,
           "video": "https://i.imgur.com/UFFJckG.mp4",
           "response": {
@@ -1155,12 +1155,12 @@ isabella: {
         {
           "id": "SP301",
           "spanish": "Siempre elijo la recomendación del chef—nunca me ha fallado.",
-          "english": "I always go for the chef’s special—it never disappoints.",
+          "english": "I always go for the chef's special—it never disappoints.",
           "points": 12,
           "video": "https://i.imgur.com/52AZqeQ.mp4",
           "response": {
             "spanish": "Así que confías en el chef. Me gusta eso. Hay algo emocionante en no saber exactamente qué vas a recibir.",
-            "english": "A man who trusts the chef—I like that. There’s something exciting about not knowing exactly what you’re getting.",
+            "english": "A man who trusts the chef—I like that. There's something exciting about not knowing exactly what you're getting.",
             "context": "Raises an intrigued eyebrow.",
             "video": "https://i.imgur.com/TXmDfHK.mp4"
           }
@@ -1181,12 +1181,12 @@ isabella: {
         {
           "id": "SP303",
           "spanish": "Te dejaré elegir—sorpréndeme.",
-          "english": "I’ll let you decide—surprise me.",
+          "english": "I'll let you decide—surprise me.",
           "points": 10,
           "video": "https://i.imgur.com/6TuZcBz.mp4",
           "response": {
             "spanish": "¿Me dejas elegir? Eso es interesante.",
-            "english": "A man who trusts a woman’s choice? That’s refreshing.",
+            "english": "A man who trusts a woman's choice? That's refreshing.",
             "context": "Tilts her head, intrigued.",
             "video": "https://i.imgur.com/9oN4IL7.mp4"
           }
@@ -1197,7 +1197,7 @@ isabella: {
     "4": {
       "initial": {
         "spanish": "Bueno, la cena ya está resuelta. Ahora dime, ¿qué es algo sobre ti que no adivinaría solo con mirarte?",
-        "english": "Alright, dinner’s taken care of. Now tell me—what’s something about you I wouldn’t guess just by looking at you?",
+        "english": "Alright, dinner's taken care of. Now tell me—what's something about you I wouldn't guess just by looking at you?",
         "context": "Resting her chin on her hand, she studies you with amused curiosity.",
         "video": "https://placeholder.com/video"
       },
@@ -1223,7 +1223,7 @@ isabella: {
           "video": "https://i.imgur.com/7XapBAT.mp4",
           "response": {
             "spanish": "¿Un viaje en solitario? Qué valiente. ¿Cuál fue la parte más inolvidable?",
-            "english": "A solo traveler? That’s impressive. What was the most unforgettable part?",
+            "english": "A solo traveler? That's impressive. What was the most unforgettable part?",
             "context": "Eyes light up with curiosity.",
             "video": "https://i.imgur.com/eGKB1YH.mp4"
           }
@@ -1231,12 +1231,12 @@ isabella: {
         {
           "id": "SP403",
           "spanish": "Tengo un talento para hacer reír a la gente. Si quieres, te lo demuestro.",
-          "english": "I have a talent for making people laugh. I’ll prove it if you want.",
+          "english": "I have a talent for making people laugh. I'll prove it if you want.",
           "points": 10,
           "video": "https://i.imgur.com/pCl0Bbg.mp4",
           "response": {
             "spanish": "¿Así que eres un comediante? Bien, impresióname. ¿Cuál es tu mejor chiste?",
-            "english": "A comedian, huh? Alright, impress me—what’s your best line?",
+            "english": "A comedian, huh? Alright, impress me—what's your best line?",
             "context": "Smirks, tilting her head slightly.",
             "video": "https://i.imgur.com/hs7bUSt.mp4"
           }
@@ -1247,7 +1247,7 @@ isabella: {
     "5": {
       "initial": {
         "spanish": "Entonces, ¿qué sigue? ¿Eres del tipo que deja que una gran noche termine aquí… o tienes algo en mente?",
-        "english": "So, what’s next? Are you the type to let a great night end here… or do you have something in mind?",
+        "english": "So, what's next? Are you the type to let a great night end here… or do you have something in mind?",
         "context": "Her voice lowers slightly, warm and inviting.",
         "video": "https://placeholder.com/video"
       },
@@ -1255,12 +1255,12 @@ isabella: {
         {
           "id": "SP501",
           "spanish": "Me encantaría continuar esta noche con una copa en mi lugar favorito.",
-          "english": "I’d love to continue this night over a nightcap at my favorite place.",
+          "english": "I'd love to continue this night over a nightcap at my favorite place.",
           "points": 15,
           "video": "https://i.imgur.com/LTJBgpX.mp4",
           "response": {
             "spanish": "Una propuesta atrevida. Muy bien... ¿dónde está ese misterioso lugar favorito tuyo?",
-            "english": "A bold proposal. Alright… where’s this mysterious favorite place of yours?",
+            "english": "A bold proposal. Alright… where's this mysterious favorite place of yours?",
             "context": "Raises an intrigued eyebrow, smirking slightly.",
             "video": "https://i.imgur.com/l0BwdLz.mp4"
           }
@@ -1268,7 +1268,7 @@ isabella: {
         {
           "id": "SP502",
           "spanish": "Planifiquemos algo para otra noche. Me encantaría verte de nuevo.",
-          "english": "Let’s plan something for another evening. I’d love to see you again.",
+          "english": "Let's plan something for another evening. I'd love to see you again.",
           "points": 12,
           "video": "https://i.imgur.com/eJN8FLc.mp4",
           "response": {
@@ -1281,12 +1281,12 @@ isabella: {
         {
           "id": "SP503",
           "spanish": "Ha sido una gran noche. Quizás nos volvamos a cruzar en algún momento.",
-          "english": "This was great. Maybe we’ll cross paths again sometime.",
+          "english": "This was great. Maybe we'll cross paths again sometime.",
           "points": 8,
           "video": "https://i.imgur.com/cauJVLP.mp4",
           "response": {
             "spanish": "¿Quizás? Eso no suena muy convincente.",
-            "english": "Maybe? That’s not very convincing.",
+            "english": "Maybe? That's not very convincing.",
             "context": "Sips the last of her wine, observing you with mild amusement.",
             "video": "https://i.imgur.com/r4VnlBx.mp4"
           }

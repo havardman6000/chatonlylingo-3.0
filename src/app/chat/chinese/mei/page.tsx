@@ -29,10 +29,6 @@ export default function MeiChatPage() {
     initializeChat()
   }, [selectedCharacter, tutorId, actions])
 
-  const handleBack = () => {
-    router.push('/chat/chinese')
-  }
-
   if (isInitializing) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
