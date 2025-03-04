@@ -4,6 +4,29 @@ import { useState, useEffect, useCallback } from 'react';
 import { messageStore } from '../services/messageStore';
 import { MessageStats } from '@/types/messageStore';
 
+// Define a more specific error type
+interface ErrorWithMessage {
+  message: string;
+}
+
+// Type guard for the error
+function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof (error as Record<string, unknown>).message === 'string'
+  );
+}
+
+// Extract message from any error type
+function getErrorMessage(error: unknown): string {
+  if (isErrorWithMessage(error)) {
+    return error.message;
+  }
+  return String(error);
+}
+
 export function useMessageTracking(address: string | null) {
   const [stats, setStats] = useState<MessageStats | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -68,8 +91,8 @@ export function useMessageTracking(address: string | null) {
       const newStats = await messageStore.purchasePackage(address);
       setStats(newStats);
       return newStats;
-    } catch (err: any) {
-      setError(err.message || 'Failed to purchase message package');
+    } catch (err: unknown) {
+      setError(getErrorMessage(err) || 'Failed to purchase message package');
       return null;
     } finally {
       setIsPurchasing(false);
@@ -96,8 +119,8 @@ export function useMessageTracking(address: string | null) {
         return true;
       }
       return false;
-    } catch (err: any) {
-      setError(err.message || 'Failed to use message');
+    } catch (err: unknown) {
+      setError(getErrorMessage(err) || 'Failed to use message');
       return false;
     } finally {
       setIsLoading(false);
@@ -118,8 +141,8 @@ export function useMessageTracking(address: string | null) {
         return true;
       }
       return false;
-    } catch (err: any) {
-      setError(err.message || 'Failed to sync with blockchain');
+    } catch (err: unknown) {
+      setError(getErrorMessage(err) || 'Failed to sync with blockchain');
       return false;
     } finally {
       setIsLoading(false);

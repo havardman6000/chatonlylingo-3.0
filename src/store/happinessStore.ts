@@ -1,6 +1,9 @@
 // src/store/happinessStore.ts
 
-export const createHappinessStore = (set: (updater: (state: { happiness: Record<string, number> }) => any) => void) => ({
+// Define a proper return type for the store updater function
+type StoreUpdater = (state: { happiness: Record<string, number> }) => { happiness: Record<string, number> };
+
+export const createHappinessStore = (set: (updater: StoreUpdater) => void) => ({
     happiness: {},
     actions: {
       updateHappiness: (characterId: string, points: number) =>

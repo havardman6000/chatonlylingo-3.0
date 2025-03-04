@@ -35,7 +35,10 @@
     ".next/types/**/*.ts",
     "src/types/**/*.d.ts",
     "src/types/*.ts",
-    "src/types/*.d.ts"
-, "src/hooks/useMessageTracking.ts", "hardhat.config.js"  ],
+    "src/types/*.d.ts",
+    "src/types/custom-types.d.ts",
+    "src/hooks/useMessageTracking.ts",
+    "hardhat.config.js"
+  ],
   "exclude": ["node_modules"]
 }

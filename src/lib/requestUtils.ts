@@ -3,6 +3,21 @@ const cache = new Map();
 const lastRequestTime = new Map();
 const MIN_REQUEST_INTERVAL = 2000; // 2 seconds between requests
 
+// Define a more specific error type
+interface ErrorWithMessage {
+  message?: string;
+}
+
+// Type guard for errors with message property
+function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof (error as Record<string, unknown>).message === 'string'
+  );
+}
+
 export async function throttledRequest<T>(key: string, requestFn: () => Promise<T>): Promise<T> {
   const now = Date.now();
   const lastRequest = lastRequestTime.get(key) || 0;
@@ -23,9 +38,9 @@ export async function throttledRequest<T>(key: string, requestFn: () => Promise<
     cache.set(key, result);
     lastRequestTime.set(key, Date.now());
     return result;
-  } catch (error: any) {
+  } catch (error: unknown) {
     // On 429, use cached data if available
-    if (error.message?.includes('429') && cache.has(key)) {
+    if (isErrorWithMessage(error) && error.message?.includes('429') && cache.has(key)) {
       console.warn('Rate limited, using cached data for', key);
       return cache.get(key) as T;
     }
@@ -38,8 +53,8 @@ export async function requestWithBackoff<T>(fn: () => Promise<T>, maxRetries = 3
   while (retries < maxRetries) {
     try {
       return await fn();
-    } catch (error: any) {
-      if (!error.message?.includes('429') || retries === maxRetries - 1) {
+    } catch (error: unknown) {
+      if (!isErrorWithMessage(error) || !error.message?.includes('429') || retries === maxRetries - 1) {
         throw error;
       }
       

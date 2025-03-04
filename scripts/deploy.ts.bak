@@ -1,8 +1,9 @@
-import { ethers } from "hardhat";
+import { ethers } from "ethers";
+import * as hre from "hardhat";
 
 async function main() {
   // Get the contract factory
-  const LingobabeTokenV2 = await ethers.getContractFactory("LingobabeTokenV2");
+  const LingobabeTokenV2 = await hre.ethers.getContractFactory("LingobabeTokenV2");
   
   // Deploy the contract
   console.log("Deploying LingobabeTokenV2...");

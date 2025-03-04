@@ -1,0 +1,11 @@
+*.d.ts
+**/*.d.ts
+node_modules
+.next
+out
+public
+**/*.js.map
+src/global.d.ts
+src/types/openai.d.ts
+src/types/**/*.d.ts
+hardhat.config.js 

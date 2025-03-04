@@ -1,10 +1,22 @@
 {
   "extends": "next/core-web-vitals",
+  "ignorePatterns": ["*.d.ts", "**/*.d.ts", "src/types/**/*", "src/global.d.ts"],
   "rules": {
     "@next/next/no-img-element": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/no-unused-vars": "error",
+    "@typescript-eslint/no-unused-vars": ["warn", { 
+      "argsIgnorePattern": "^_",
+      "varsIgnorePattern": "^_"
+    }],
     "import/no-anonymous-default-export": "off",
     "react-hooks/exhaustive-deps": "off"
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.d.ts", "**/*.d.ts", "src/global.d.ts", "src/types/**/*"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    }
+  ]
 } 

@@ -231,6 +231,13 @@ export default function ChatInterface({ characterId, embedded = false }: ChatInt
       {/* Fixed Input Area */}
       <div className="fixed bottom-0 left-0 right-0 bg-[#1a1b1e] border-t border-gray-800">
         <div className="p-4">
+          {/* Error message display */}
+          {errorMsg && (
+            <div className="mb-4 bg-red-900/50 text-red-200 rounded-lg p-2 text-center text-sm">
+              {errorMsg}
+            </div>
+          )}
+          
           {/* Chat Options - Moved above the input */}
           {showOptions && currentSceneData?.options && (
             <div className="mb-4 bg-gray-800/50 rounded-lg p-2">
