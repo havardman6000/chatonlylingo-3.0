@@ -1,42 +1,29 @@
 // src/app/chat/chinese/page.tsx
 'use client';
 
-import { useWeb3 } from '@/components/providers/web3-provider';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import DynamicBar from '@/components/DynamicBar';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AccessStatus } from '@/types/accessStatus';
 import { BackButton } from '@/components/BackButton';
+
 export default function DateSelectionPage() {
-  const { isConnected, address } = useWeb3();
   const router = useRouter();
   const [accessStatuses, setAccessStatuses] = useState<Record<string, boolean>>({});
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!isConnected) {
-      router.push('/');
-    }
-  }, [isConnected, router]);
-
-  // Load access status for all tutors
+  // Load access status for all tutors (simulated)
   useEffect(() => {
     const loadAccessStatuses = async () => {
-      if (!window.tokenManager?.initialized || !address) {
-        setIsLoading(false);
-        return;
-      }
-
       try {
         const tutorIds = ['mei', 'ting', 'xue'];
         const statuses: Record<string, boolean> = {};
 
+        // Simulate all tutors having access
         for (const tutorId of tutorIds) {
-          const accessResult = await window.tokenManager.checkAccess(tutorId);
-          statuses[tutorId] = accessResult.hasAccess;
+          statuses[tutorId] = true;
         }
 
         setAccessStatuses(statuses);
@@ -49,37 +36,6 @@ export default function DateSelectionPage() {
     };
 
     loadAccessStatuses();
-  }, [address]);
-
-  // Listen for access status changes
-  useEffect(() => {
-    const handleAccessChange = (event: Event) => {
-      const customEvent = event as CustomEvent<AccessStatus>;
-      if (customEvent.detail?.characterId) {
-        setAccessStatuses(prev => ({
-          ...prev,
-          [customEvent.detail.characterId]: customEvent.detail.hasAccess
-        }));
-      }
-    };
-
-    const handleChatCompleted = (event: Event) => {
-      const customEvent = event as CustomEvent<{characterId: string}>;
-      if (customEvent.detail?.characterId) {
-        setAccessStatuses(prev => ({
-          ...prev,
-          [customEvent.detail.characterId]: false
-        }));
-      }
-    };
-
-    window.addEventListener('accessStatusChanged', handleAccessChange);
-    window.addEventListener('chatCompleted', handleChatCompleted);
-
-    return () => {
-      window.removeEventListener('accessStatusChanged', handleAccessChange);
-      window.removeEventListener('chatCompleted', handleChatCompleted);
-    };
   }, []);
 
   const handleCardClick = (path: string) => {
@@ -98,18 +54,11 @@ export default function DateSelectionPage() {
     } else {
       return (
         <div className="absolute top-3 right-3 bg-gray-600 text-white text-xs px-2 py-1 rounded-full z-10 flex items-center gap-1">
-          <span>10 LBAI</span>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" className="w-3 h-3">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m0 0v2m0-2h2m-2 0H9m3-11a3 3 0 100 6 3 3 0 000-6z" />
-          </svg>
+          <span>Free</span>
         </div>
       );
     }
   };
-
-  if (!isConnected) {
-    return null;
-  }
 
   return (
     <main className="min-h-screen bg-gradient-to-r from-pink-50 to-rose-100 py-12">
@@ -143,13 +92,13 @@ export default function DateSelectionPage() {
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mr-2 text-green-600">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <span>Each chat requires a one-time payment of 10 LBAI</span>
+                <span>All chats are now available for free</span>
               </div>
               <div className="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="w-4 h-4 mr-2 text-green-600">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
-                <span>Access remains valid until the chat is completed</span>
+                <span>No account or wallet connection required</span>
               </div>
             </div>
           )}
