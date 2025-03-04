@@ -3,12 +3,16 @@
   publish = ".next"
 
 [build.environment]
-  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  NETLIFY_NEXT_PLUGIN_SKIP = "false"
   DISABLE_ESLINT_PLUGIN = "true"
-  NODE_VERSION = "18.17.0"
+  NODE_VERSION = "20.10.0"
+  NPM_FLAGS = "--no-optional"
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[plugins]]
+  package = "./netlify/plugins/netlify-plugin-nextjs-custom"
 
 # Function settings for Next.js API routes
 [functions]
@@ -21,3 +25,17 @@
   from = "/api/*"
   to = "/api/:splat"
   status = 200
+
+# Fallback for API routes if direct path doesn't work
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/next_api/:splat"
+  status = 200
+  force = false
+
+# Fallback for all other routes - SPA mode
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false
